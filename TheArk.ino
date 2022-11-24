@@ -38,79 +38,20 @@ WiFiClient      socketClient;
     #define TerminalAttached  true
 #endif
 
-// Buffer Constant Both sides must Match
-#ifndef Receive_Buffer_Size 55
-    // Receiver Buffer Size 
-    #define Receive_Buffer_Size   55
-#endif
 
-// Buffer Constant Both sides must Match
-#ifndef Send_Buffer_Size
-    // Send Buffer Size 
-    #define Send_Buffer_Size   6
-#endif
+// Data from Barcode Scanner
+uint8_t receive_buffer[20], receive_buffer_counter, receive_byte;
 
-// telemetry
-uint8_t telemetry_lost; 
-uint8_t check_byte, temp_byte;
+// Filename
+String filename;
 
-//from YMC-32
-uint8_t rec_telemetry_last_byte = Receive_Buffer_Size;                                                               //this is the last byte of the receivers telemetry buffer they have to match the YMC-32's TX
-uint8_t receive_buffer[Receive_Buffer_Size + 1], receive_buffer_counter, receive_byte_previous, receive_byte, receive_state;              // rec_telemetry_last_byte + 1
-
-//to YMC-32                                              
-uint8_t send_telemetry_last_byte = Send_Buffer_Size;                                                          //this is the last byte of the transmitters telemetry buffer they have to match the YMC-32's RX  
-uint8_t telemetry_send_byte, telemetry_loop_counter, ready_to_send;
-uint32_t telemetry_buffer_byte;
-
-// YMC-32 commands
-uint8_t ymc32_command;
-float ymc32_fval;
-
-uint8_t error, alarm_sound, flight_mode;
-uint8_t alarm_silence;
-uint8_t start_byte, flight_timer_start;
-uint8_t hours,minutes,seconds;
-uint8_t heading_lock;
-uint8_t number_used_sats;
-uint8_t fix_type;
-
-uint8_t debug_byte;
-
-int8_t page, previous_page;
-
-uint32_t current_receive, current_receive_min, current_receive_max, last_receive, next_sound, flight_timer, flight_timer_previous, flight_timer_from_start, flight_time_from_eeprom;
-uint32_t hours_flight_time, minutes_flight_time, seconds_flight_time;
-int32_t loop_timer, loop_timer_min, loop_timer_max, l_lat_gps, l_lon_gps;
-
-int16_t temperature,temperature_min,temperature_max, button_push, button_store,roll_angle,roll_angle_min,roll_angle_max, pitch_angle, pitch_angle_min, pitch_angle_max;
-int16_t altitude_meters, altitude_meters_min, altitude_meters_max;
-uint16_t key_press_timer;
-int16_t manual_takeoff, takeoff_throttle;
-uint16_t actual_compass_heading;
-
-float battery_voltage,battery_voltage_min,battery_voltage_max;
-
-float pid_p_gain_roll;               //Gain setting for the pitch and roll P-controller
-float pid_i_gain_roll;              //Gain setting for the pitch and roll I-controller
-float pid_d_gain_roll;              //Gain setting for the pitch and roll D-controller
-float pid_p_gain_yaw;                //Gain setting for the pitch P-controller (default = 4.0).
-float pid_i_gain_yaw;               //Gain setting for the pitch I-controller (default = 0.02).
-float pid_d_gain_yaw;                //Gain setting for the pitch D-controller (default = 0.0).
-float pid_p_gain_altitude;           //Gain setting for the altitude P-controller (default = 1.4).
-float pid_i_gain_altitude;           //Gain setting for the altitude I-controller (default = 0.2).
-float pid_d_gain_altitude;          //Gain setting for the altitude D-controller (default = 0.75).
-
-byte led;
+uint8_t led;
 
 // Background
 boolean Backgroundinit = true;
 
-// Return to Home
-uint8_t return_to_home_command;
-
 // YMC32 webpage, gzipped and base64 encoding to save space
-char webpage_base64[] = "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";
+char webpage_base64[] = "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";
 
 void printWifiStatus()
 {
@@ -128,7 +69,7 @@ void printWifiStatus()
 
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
-  pinMode(0, OUTPUT);                                   // Green LED
+  pinMode(0, OUTPUT);                                   // Status LED
 
   if(TerminalAttached) {  
     Serial.begin(57600);
@@ -138,10 +79,7 @@ void setup() {
 //  delay(250);  
 
   led = 0;
-  ready_to_send = 0;
-  receive_state = 1;
-  check_byte = 0;
-
+  
   // check for the WiFi module:
   if (WiFi.status() == WL_NO_MODULE) {
     if(TerminalAttached) {
@@ -199,6 +137,7 @@ void loop() {
     if (status == WL_AP_CONNECTED) {
       // a device has connected to the AP
       Serial.println("Device connected to AP");
+      printWifiStatus();
     } else {
       // a device has disconnected from the AP, and we are back in listening mode
       Serial.println("Device disconnected from AP");
@@ -304,14 +243,14 @@ void loop() {
            Serial.println("Websocket Flushed");
        }
 
-//        // flush the serial1 port - Arduion to Arduino comms
+//        // flush the serial1 port - clear out any barcode scanner data
 //        while(Serial1.available()) {
 //            char ch = Serial1.read();
 //        }
-//       if(TerminalAttached) {
+       if(TerminalAttached) {
 //           Serial.println("Serial Port 1 Flushed");
-//           Serial.println("Background Init Complete");
-//       }
+           Serial.println("Background Init Complete");
+       }
     }
     
     // Background Process 1
@@ -353,184 +292,53 @@ void loop() {
 
       // process command
       switch (cmd.toInt()) {
-        //do something (1-9 are the PID buttons - they don't get sent, they are added to 20 and 21)
-        // minus
-        case 20:
-            subcommand = "Minus";
-            break;
-        // plus
-        case 21:
-            subcommand = "Plus";
-            break;
-        // user command
-        case 30:
-            if(subcommand == "Ledon") {
-                digitalWrite(0, HIGH);
-                webSocketServer.sendData("R:" + cmd + " - " + subcommand);
-            } else if (subcommand == "Ledoff") {
-                digitalWrite(0, LOW);
-                webSocketServer.sendData("R:" + cmd + " - " + subcommand);
-            }else if (subcommand == "Pidr") {
-                webSocketServer.sendData("R:" + String(pid_p_gain_roll) + ":" + String(pid_i_gain_roll) + ":" + String(pid_d_gain_roll));
-            }else if (subcommand == "Pidy") {
-                webSocketServer.sendData("R:" + String(pid_p_gain_yaw) + ":" + String(pid_i_gain_yaw) + ":" + String(pid_d_gain_yaw));
-            } else if (subcommand == "Pida") {
-                webSocketServer.sendData("R:" + String(pid_p_gain_altitude) + ":" + String(pid_i_gain_altitude) + ":" + String(pid_d_gain_altitude));
-            } else if (subcommand == "Rst") {
-              reset_data();
-              webSocketServer.sendData("R:Reset Sent");
-            } else {
-                webSocketServer.sendData("E:" + cmd + " - " + subcommand);
+          // set file name
+          case 1:
+            filename = usrVal;
+            filename += ".txt";
+            if(TerminalAttached) {
+                Serial.println("Filename: " + filename);
             }
+            webSocketServer.sendData("R:" + cmd + " - " + filename);
             break;
-        // user command
-        case 40:
-            if (subcommand == "CRP") {
-              ymc32_command = 1;
-              init_telemetry_data(usrVal);
-              webSocketServer.sendData("P:" + String(pid_p_gain_roll) + ">>" + String(usrVal));             
-            } else if (subcommand == "CRI") {
-              ymc32_command = 2;
-              init_telemetry_data(usrVal);
-              webSocketServer.sendData("P:" + String(pid_i_gain_roll) + ">>" + String(usrVal));
-            } else if (subcommand == "CRD") {
-              ymc32_command = 3;
-              init_telemetry_data(usrVal);
-              webSocketServer.sendData("P:" + String(pid_d_gain_roll) + ">>" + String(usrVal));
-            } else if (subcommand == "CYP") {
-              ymc32_command = 4;
-              init_telemetry_data(usrVal);
-              webSocketServer.sendData("P:" + String(pid_p_gain_yaw) + ">>" + String(usrVal));
-            } else if (subcommand == "CYI") {
-              ymc32_command = 5;
-              init_telemetry_data(usrVal);
-               webSocketServer.sendData("P:" + String(pid_i_gain_yaw) + ">>" + String(usrVal));
-           } else if (subcommand == "CYD") {
-              ymc32_command = 6;
-              init_telemetry_data(usrVal);
-              webSocketServer.sendData("P:" + String(pid_d_gain_yaw) + ">>" + String(usrVal));
-            } else if (subcommand == "CAP") {
-              ymc32_command = 7;
-              init_telemetry_data(usrVal);
-              webSocketServer.sendData("P:" + String(pid_p_gain_altitude) + ">>" + String(usrVal));
-            } else if (subcommand == "CAI") {
-              ymc32_command = 8;
-              init_telemetry_data(usrVal);
-              webSocketServer.sendData("P:" + String(pid_i_gain_altitude) + ">>" + String(usrVal));
-            } else if (subcommand == "CAD") {
-              ymc32_command = 9;
-              init_telemetry_data(usrVal);
-              webSocketServer.sendData("P:" + String(pid_d_gain_altitude) + ">>" + String(usrVal));
-            } else {
-                webSocketServer.sendData("E:" + cmd + " - " + subcommand);
-            }
-            break;
-            case 50:
-                if (subcommand == "TTC") {
-                  ymc32_command = 10;
-                  init_telemetry_data("0");
-                  webSocketServer.sendData("R:" + cmd + " - MTT Sent");
-                }
-                if (subcommand == "SPD") {
-                  ymc32_command = 11;
-                  init_telemetry_data("0");
-                  webSocketServer.sendData("R:" + cmd + " - Save PID Sent");
-                }
-                if (subcommand == "RTH") {
-                  ymc32_command = 12;
-                  init_telemetry_data("0");
-                  webSocketServer.sendData("R:" + cmd + " - RTH Sent");
-                }
-                if (subcommand == "RDC") {
-                  ymc32_command = 99;
-                  init_telemetry_data("0");
-                  webSocketServer.sendData("R:" + cmd + " - Drop Requested");
-                }
-            break;
-        default:
-            break;
-      }
-
-      // process response
-      switch (cmd.toInt()) {
-          // minus response
-          case 20:
-              webSocketServer.sendData("R:" + cmd + " - " + subcommand);
-              break;
-          // plus response
-          case 21:
-              webSocketServer.sendData("R:" + cmd + " - " + subcommand);
-              break;
-          case 30:
-              break;
-          case 40:
-              break;
-          case 50:
+          // process command/controls
+          case 2:
+              if(subcommand == "Ledon") {
+                  digitalWrite(0, HIGH);
+                  webSocketServer.sendData("R:" + cmd + " - " + subcommand);
+              } else if (subcommand == "Ledoff") {
+                  digitalWrite(0, LOW);
+                  webSocketServer.sendData("R:" + cmd + " - " + subcommand);
+              } else if (subcommand == "Rst") {
+                  reset_data();
+                  webSocketServer.sendData("R:Reset Sent");
+              } else {
+                  webSocketServer.sendData("E:" + cmd + " - " + subcommand);
+              }
               break;
           default:
-              webSocketServer.sendData("E:" + cmd + " - " + subcommand);
               break;
-        }
+      }
     }
   }
 
-//    // Background Process 2
-//    if(Serial1.available()) {                                                //If there are bytes available.
-//      receive_byte = Serial1.read();                                       //Load them in the received_buffer array.
-//        switch (receive_state) {
-//            // waiting for start
-//            case 1:
-//                if(receive_byte == 'B') {
-//                    if(receive_byte_previous == 'J') {
-//                        receive_buffer_counter = 2;
-//                        receive_buffer[0] = 'J';
-//                        receive_buffer[1] = 'B';
-//                        receive_state = 2;
-//                    }
-//                }
-//                receive_byte_previous = receive_byte;
-//            break;
-//            // building buffer
-//            case 2:
-//                receive_buffer[receive_buffer_counter++] = receive_byte;
-//                // see if we have a valid buffer
-//                if(receive_buffer_counter == rec_telemetry_last_byte) {
-//                    check_byte = 0;                                                                         //Reset the check_byte variable.
-//                    for(temp_byte=0;temp_byte < (rec_telemetry_last_byte - 1); temp_byte ++) {
-//                        check_byte ^= receive_buffer[temp_byte];                                            //Calculate the check_byte.
-//                    }
-//                    // valid buffer
-//                    if(check_byte == receive_buffer[(rec_telemetry_last_byte - 1)]) {
-//                      get_data();                                                           //If there are two start signatures detected there could be a complete data set available.
-//                      process_data();
-//                     if(TerminalAttached) {
-//                       print_telemetry_data();
-//                     }
-//                      
-//                      // send status up date to webserver
-//                      if(socketClient.connected()) {
-//                        webpage_data();
-//                      }
-//      
-//                    } else {
-//                        receive_byte_previous = receive_byte;
-//                        receive_state = 1;
-//                    }
-//                } else if (receive_buffer_counter > rec_telemetry_last_byte) {
-//                    receive_byte_previous = receive_byte;
-//                    receive_state = 1;
-//                }
-//            break;
+//    // Background Process 2 - process barcodes
+//    if(Serial1.available()) {
+//         receive_byte = Serial1.read();
+//         receive_buffer[receive_buffer_counter++] = receive_byte;
+//
+//        // see if we have a valid buffer
+//        if(receive_byte == '/r') {
+//             if(TerminalAttached) {
+//                // Barcode
+//                Serial.print("Barcode: ");
+//                Serial.println(barcode);
+//             }
+//             webSocketServer.sendData("B:"  + receive_buffer);
 //        }
 //    }
-
-//  // Background Process 3
-//  // see if we have something to send, if so do it
-//  if(ready_to_send == 1) {
-//    send_telemetry_data();
-//  }
   
-  // Background Process 4
+  // Background Process 3
   // background delay and heart beat
   if(led == 0) {
     led = 1;
@@ -541,114 +349,7 @@ void loop() {
   }
 }
 
-//When there are two start signatures received the received data between them can be tested to se if it is a valid data stream.
-void get_data(void){
-    current_receive = millis() - last_receive;
-    last_receive = millis();                                                              //Remember when this reception has arrived.
-    //In the following lines the different variables are restored from the valid data stream.
-    //The name of the variables are the same as in the YMFC-32 flight controller program.
-    error = receive_buffer[2];
-    flight_mode = receive_buffer[3];
-    debug_byte = receive_buffer[4];
-    temperature = receive_buffer[5] | receive_buffer[6] << 8;
-    roll_angle = receive_buffer[7] - 100;
-    pitch_angle = receive_buffer[8] - 100;
-    start_byte = receive_buffer[9];
-    altitude_meters = (receive_buffer[10] | receive_buffer[11] << 8) - 1000;
-    takeoff_throttle = receive_buffer[12] | receive_buffer[13] << 8;
-    actual_compass_heading = receive_buffer[14] | receive_buffer[15] << 8;
-    heading_lock = receive_buffer[16];
-    number_used_sats = receive_buffer[17];
-    fix_type = receive_buffer[18];
-    l_lat_gps = (int32_t)receive_buffer[19] | (int32_t)receive_buffer[20] << 8 | (int32_t)receive_buffer[21] << 16 | (int32_t)receive_buffer[22] << 24;
-    l_lon_gps = (int32_t)receive_buffer[23] | (int32_t)receive_buffer[24] << 8 | (int32_t)receive_buffer[25] << 16 | (int32_t)receive_buffer[26] << 24;
-    loop_timer = (int32_t)receive_buffer[27] | (int32_t)receive_buffer[28] << 8 | (int32_t)receive_buffer[29] << 16 | (int32_t)receive_buffer[30] << 24;
-    pid_p_gain_roll = (float)(receive_buffer[31] | receive_buffer[32] << 8)/1000;
-    pid_i_gain_roll = (float)(receive_buffer[33] | receive_buffer[34] << 8)/1000;
-    pid_d_gain_roll = (float)(receive_buffer[35] | receive_buffer[36] << 8)/1000;
-    pid_p_gain_yaw = (float)(receive_buffer[37] | receive_buffer[38] << 8)/1000;
-    pid_i_gain_yaw = (float)(receive_buffer[39] | receive_buffer[40] << 8)/1000;
-    pid_d_gain_yaw = (float)(receive_buffer[41] | receive_buffer[42] << 8)/1000;
-    pid_p_gain_altitude = (float)(receive_buffer[43] | receive_buffer[44] << 8)/1000;
-    pid_i_gain_altitude = (float)(receive_buffer[45] | receive_buffer[46] << 8)/1000;
-    pid_d_gain_altitude = (float)(receive_buffer[47] | receive_buffer[48] << 8)/1000;
-    battery_voltage = (float)(receive_buffer[49] | receive_buffer[50] << 8)/100;
-    manual_takeoff = receive_buffer[51] | receive_buffer[52] << 8;
-    return_to_home_command = receive_buffer[53];
-}
-
-//Process the data for the Web page
-void process_data(void){
-    //System Status
-    //create battery min and max values
-    if((battery_voltage <= battery_voltage_min) | (battery_voltage_min == 0)) {
-    battery_voltage_min = battery_voltage;
-    }
-    if(battery_voltage >= battery_voltage_max) {
-    battery_voltage_max = battery_voltage;
-    }
-
-    //telemetry processing time
-    if((current_receive <=  current_receive_min) | ( current_receive_min == 0)) {
-       current_receive_min =  current_receive;
-    }
-    if(current_receive >=  current_receive_max) {
-       current_receive_max =  current_receive;
-    }
-
-    //loop_timer processing time
-    if((loop_timer <=  loop_timer_min) | ( loop_timer_min == 0)) {
-       loop_timer_min =  loop_timer;
-    }
-    if(loop_timer >=  loop_timer_max) {
-       loop_timer_max =  loop_timer;
-    }
-
-    // Flight Status
-    //Roll angle
-    if((roll_angle <=  roll_angle_min) | ( roll_angle_min == 0)) {
-       roll_angle_min =  roll_angle;
-    }
-    if(roll_angle >=  roll_angle_max) {
-       roll_angle_max =  roll_angle;
-    }
-
-    //Pitch angle
-    if((pitch_angle <=  pitch_angle_min) | ( pitch_angle_min == 0)) {
-       pitch_angle_min =  pitch_angle;
-    }
-    if(pitch_angle >=  pitch_angle_max) {
-       pitch_angle_max =  pitch_angle;
-    }
-
-    //Altitude Meters
-    if((altitude_meters <=  altitude_meters_min) | ( altitude_meters_min == 0)) {
-       altitude_meters_min =  altitude_meters;
-    }
-    if(altitude_meters >=  altitude_meters_max) {
-       altitude_meters_max =  altitude_meters;
-    }
-
-    //Temperature
-    if((temperature <=  temperature_min) | ( temperature_min == 0)) {
-       temperature_min =  temperature;
-    }
-    if(temperature >=  temperature_max) {
-       temperature_max =  temperature;
-    }
-}
 
 //Process the data for the Web page
 void reset_data(void){
-    ymc32_command = 0;
-    ymc32_fval = 0;
-    check_byte = 0;
-    ready_to_send = 1; 
-    battery_voltage_min = battery_voltage_max = 0;
-    current_receive_min = current_receive_max = 0;
-    loop_timer_min = loop_timer_max = 0;
-    roll_angle_min = roll_angle_max = 0;
-    pitch_angle_min = pitch_angle_max = 0;
-    altitude_meters_min = altitude_meters_max = 0;
-    temperature_min = temperature_max = 0;
 }
