@@ -17,6 +17,7 @@
 #define _WIFININA_LOGLEVEL_       1
 #include <WiFiNINA_Generic.h>
 #include "network_parameters.h"
+#include <KeyboardController.h> 
 
 // global var
 char ssid[] = SECRET_SSID;
@@ -32,15 +33,20 @@ WiFiServer      socketServer(socketPort);
 WebSocketServer webSocketServer;
 WiFiClient      socketClient;
 
+USBHost usb;
+KeyboardController keyboard(usb);
+
 // Console Attached
 #ifndef TerminalAttached
     // true = terminal attached (send serial messages), false = no terminal attached no messages 
-    #define TerminalAttached  true
+    #define TerminalAttached  false
 #endif
 
 
 // Data from Barcode Scanner
-uint8_t receive_buffer[20], receive_buffer_counter, receive_byte;
+char receive_buffer[20];
+uint8_t receive_buffer_counter;
+int receive_byte;
 
 // Filename
 String filename;
@@ -66,17 +72,17 @@ void printWifiStatus()
   }
 }
 
-
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
-  pinMode(0, OUTPUT);                                   // Status LED
-
+  pinMode(2, OUTPUT);                                   // Green LED
+  pinMode(3, OUTPUT);                                   // Red LED
+  
+  receive_buffer_counter = 0;
+  
   if(TerminalAttached) {  
     Serial.begin(57600);
     delay(5000);
-  }
-//  Serial1.begin(9600);  
-//  delay(250);  
+  } 
 
   led = 0;
   
@@ -126,9 +132,15 @@ void setup() {
   // start the web and socket servers
   WebServer.begin();
   socketServer.begin();
+
+  digitalWrite(2, HIGH);
+  delay(5000);
+  digitalWrite(2, LOW);
 }
 
 void loop() {
+  usb.Task(); 
+    
   // compare the previous status to the current status
   if (status != WiFi.status()) {
     // it has changed update the variable
@@ -243,12 +255,7 @@ void loop() {
            Serial.println("Websocket Flushed");
        }
 
-//        // flush the serial1 port - clear out any barcode scanner data
-//        while(Serial1.available()) {
-//            char ch = Serial1.read();
-//        }
        if(TerminalAttached) {
-//           Serial.println("Serial Port 1 Flushed");
            Serial.println("Background Init Complete");
        }
     }
@@ -258,8 +265,6 @@ void loop() {
     String data = webSocketServer.getData();
     if (data.length() > 0) 
     {
-      //String cmd = data.substring(0, data.indexOf(":"));
-      //String setting = data.substring(data.indexOf(":") + 1);
       // get tools to parse incoming request
       char buf[data.length()+1];
       data.toCharArray(buf, sizeof(buf));
@@ -304,10 +309,10 @@ void loop() {
           // process command/controls
           case 2:
               if(subcommand == "Ledon") {
-                  digitalWrite(0, HIGH);
+                  digitalWrite(2, HIGH);
                   webSocketServer.sendData("R:" + cmd + " - " + subcommand);
               } else if (subcommand == "Ledoff") {
-                  digitalWrite(0, LOW);
+                  digitalWrite(2, LOW);
                   webSocketServer.sendData("R:" + cmd + " - " + subcommand);
               } else if (subcommand == "Rst") {
                   reset_data();
@@ -321,22 +326,6 @@ void loop() {
       }
     }
   }
-
-//    // Background Process 2 - process barcodes
-//    if(Serial1.available()) {
-//         receive_byte = Serial1.read();
-//         receive_buffer[receive_buffer_counter++] = receive_byte;
-//
-//        // see if we have a valid buffer
-//        if(receive_byte == '/r') {
-//             if(TerminalAttached) {
-//                // Barcode
-//                Serial.print("Barcode: ");
-//                Serial.println(barcode);
-//             }
-//             webSocketServer.sendData("B:"  + receive_buffer);
-//        }
-//    }
   
   // Background Process 3
   // background delay and heart beat
@@ -352,4 +341,18 @@ void loop() {
 
 //Process the data for the Web page
 void reset_data(void){
+}
+
+// This function intercepts key press
+void keyPressed() { 
+  receive_byte = keyboard.getKey();
+  receive_buffer[receive_buffer_counter++] = receive_byte;
+
+  if(receive_byte == 0x0d) {
+    receive_buffer[receive_buffer_counter++] = 0;
+    
+    String s = String(receive_buffer);
+    webSocketServer.sendData("B:" + s);
+    receive_buffer_counter = 0;
+  }  
 }
