@@ -1,2 +1,2 @@
 # TheArk
-Inventory project with Barcode Reader and Web Interface
+Inventory Project with Barcode Reader and Web Interface

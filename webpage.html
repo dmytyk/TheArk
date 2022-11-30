@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Playground Inventory System</title>
+        <title>The Ark Playground</title>
         <meta charset="utf-8">
         <link rel="shortcut icon" href="#">
         <style>
@@ -22,20 +22,60 @@
                 top: 80px;
                 left: 15px;
             }
-            div.beepbutton {
+            div.filecontrol {
                 position: absolute;
                 top: 15px;
-                left: 340px;
+                left: 345px;
+            }
+            div.beepbutton {
+                position: absolute;
+                top: 280px;
+                left: 15px;
             }
             div.ledonbutton {
                 position: absolute;
-                top: 50px;
-                left: 340px;
+                top: 280px;
+                left: 180px;
             }
             div.ledoffbutton {
                 position: absolute;
-                top: 85px;
-                left: 340px;
+                top: 324px;
+                left: 180px;
+            }
+            div.rstbutton {
+                position: absolute;
+                top: 324px;
+                left: 15px;
+            }
+            div.listdirbutton {
+                position: absolute;
+                top: 15px;
+                left: 545px;
+            }
+            div.listfilebutton {
+                position: absolute;
+                top: 60px;
+                left: 545px;
+            }
+            div.rmvdirbutton {
+                position: absolute;
+                top: 105px;
+                left: 545px;
+            }
+            div.rmvfilebutton {
+                position: absolute;
+                top: 150px;
+                left: 545px;
+            }
+            div.clrfilebutton {
+                position: absolute;
+                top: 195px;
+                left: 545px;
+            }
+            div.savefilebutton {
+                position: absolute;
+                top: 240px;
+                left: 545px;
             }
 
             .commandbutton {
@@ -43,8 +83,8 @@
                 background-color: Orange;
                 color: black;
                 padding: 2px 2px;
-                width: 80px;
-                font-size: 10px;
+                width: 100px;
+                font-size: 12px;
                 cursor: pointer;
                 text-align: center;
             }
@@ -62,7 +102,7 @@
             .ledbuttonon {
                 border: solid;
                 border-color: black;
-                background-color: Red;
+                background-color: Green;
                 color: white;
                 padding: 5px 5px;
                 width: 150px;
@@ -73,7 +113,7 @@
             .ledbuttonoff {
                 border: solid;
                 border-color: black;
-                background-color: Green;
+                background-color: Black;
                 color: white;
                 padding: 5px 5px;
                 width: 150px;
@@ -81,33 +121,86 @@
                 cursor: pointer;
                 text-align: center;
             }
+            .rstbuttonon {
+                border: solid;
+                border-color: black;
+                background-color: Red;
+                color: white;
+                padding: 5px 5px;
+                width: 150px;
+                font-size: 12px;
+                cursor: pointer;
+                text-align: center;
+            }
+            .listdirbuttonon {
+                border: solid;
+                border-color: black;
+                background-color: Blue;
+                color: white;
+                padding: 5px 5px;
+                width: 120px;
+                font-size: 12px;
+                cursor: pointer;
+                text-align: center;
+            }
+            .listfilebuttonon {
+                border: solid;
+                border-color: black;
+                background-color: Blue;
+                color: white;
+                padding: 5px 5px;
+                width: 120px;
+                font-size: 12px;
+                cursor: pointer;
+                text-align: center;
+            }
+            .rmvdirbuttonon {
+                border: solid;
+                border-color: black;
+                background-color: Red;
+                color: white;
+                padding: 5px 5px;
+                width: 120px;
+                font-size: 12px;
+                cursor: pointer;
+                text-align: center;
+            }
+            .rmvfilebuttonon {
+                border: solid;
+                border-color: black;
+                background-color: Red;
+                color: white;
+                padding: 5px 5px;
+                width: 120px;
+                font-size: 12px;
+                cursor: pointer;
+                text-align: center;
+            }
+            .clrfilebuttonon {
+                border: solid;
+                border-color: black;
+                background-color: Red;
+                color: white;
+                padding: 5px 5px;
+                width: 120px;
+                font-size: 12px;
+                cursor: pointer;
+                text-align: center;
+            }
+            .savefilebuttonon {
+                border: solid;
+                border-color: black;
+                background-color: Orange;
+                color: white;
+                padding: 5px 5px;
+                width: 120px;
+                font-size: 12px;
+                cursor: pointer;
+                text-align: center;
+            }
         </style>
     </head>
     <body>
-         <div class="usercontrol">
-            <table style="background-color: #ffffff; border:2px black solid;">
-                <tr>
-                    <td colspan="2" align="center" style="border:1px black solid; width:300px;"><b>Setup</b></td>
-                </tr>
-                <tr>
-                    <td>Filename</td>
-                    <td><input type="text" id="filename" size="14">&nbsp;<button type="button" name="1" class="commandbutton" onclick="sendusercommand(name)">Change</button></td>
-                </tr>
-                <tr>
-                    <td colspan="3" align="center">Response</td>
-                </tr>
-                <tr>
-                    <td colspan="3" ><textarea name="response" id="response" class="response" rows="4" cols="37" readonly></textarea></td>
-                </tr>
-                <tr>
-                    <td colspan="3" align="center">BarCodes</td>
-                </tr>
-                <tr>
-                    <td colspan="3" ><textarea name="barcodes" id="barcodes" class="barcodes" rows="6" cols="37" readonly></textarea></td>
-                </tr>
-            </table>
-        </div>
-
         <div class="wifistatus">
             <table style="background-color: #ffffff; border:2px black solid;">
                 <tr>
@@ -119,25 +212,91 @@
             </table>
         </div>
 
-         <div id="commandbuttons" class="commandbuttons">
-             <div id="beepbutton" class="beepbutton">
-                 <button type="button" id="beep" class="beepbuttonoff" onclick="beep()">Test Beep</button>
-             </div>
-             <div id="ledonbutton" class="ledonbutton">
-                 <button type="button" id="ledon" class="ledbuttonon" name="Ledon" onclick="sendcontrolcommand(name)">Led ON</button>
-             </div>
-             <div id="ledoffbutton" class="ledoffbutton">
-                 <button type="button" id="ledoff" class="ledbuttonoff" name="Ledoff"  onclick="sendcontrolcommand(name)">Led Off</button>
-             </div>
-         </div>
+        <div class="usercontrol">
+            <table style="background-color: #ffffff; border:2px black solid;">
+                <tr>
+                    <td colspan="2" align="center" style="border:1px black solid; width:300px;"><b>Setup / Configuration</b></td>
+                </tr>
+                <tr>
+                    <td>Filename:</td>
+                    <td><input type="text" id="filename" size="14" maxlength="8">&nbsp;<button type="button" name="Change" class="commandbutton" onclick="sendcontrolcommand(name)">Change</button></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">Command Responses</td>
+                </tr>
+                <tr>
+                    <td colspan="2" ><textarea name="response" id="response" class="response" rows="6" cols="38" readonly></textarea></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="filecontrol">
+            <table style="background-color: #ffffff; border:2px black solid;">
+                <tr>
+                    <td colspan="2" align="center" style="border:1px black solid; width:175px;"><b>File Control</b></td>
+                </tr>
+                <tr>
+                    <td align="center">Active File:</td><td id="Active_File"></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">Scanned BarCodes</td>
+                </tr>
+                <tr>
+                    <td colspan="2" ><textarea name="scannedbarcodes" id="scannedbarcodes" class="scannedbarcodes" rows="2" cols="21" readonly></textarea></td>
+                </tr>
+                <tr>
+                <td colspan="2" align="center">File Responses</td>
+                </tr>
+                <tr>
+                    <td colspan="2" ><textarea name="fileresponses" id="fileresponses" class="fileresponses" rows="12" cols="21"></textarea></td>
+                </tr>
+            </table>
+        </div>
+
+        <div>
+            <div id="beepbutton" class="beepbutton">
+                <button type="button" id="beep" class="beepbuttonoff" onclick="beep()">Test Beep</button>
+            </div>
+            <div id="ledonbutton" class="ledonbutton">
+                <button type="button" id="ledon" class="ledbuttonon" name="Ledon" onclick="sendcontrolcommand(name)">Led ON</button>
+            </div>
+            <div id="ledoffbutton" class="ledoffbutton">
+                <button type="button" id="ledoff" class="ledbuttonoff" name="Ledoff" onclick="sendcontrolcommand(name)">Led Off</button>
+            </div>
+            <div id="rstbutton" class="rstbutton">
+                <button type="button" id="rst" class="rstbuttonon" name="Rst" onclick="sendcontrolcommand(name)">Reset</button>
+            </div>
+            <div id="savefilebutton" class="savefilebutton">
+                <button type="button" id="rst" class="savefilebuttonon" name="SavFile" onclick="savefilecommand()">Save File</button>
+            </div>
+        </div>
+
+        <div>
+            <div id="listdirbutton" class="listdirbutton">
+                <button type="button" id="listdir" class="listdirbuttonon" name="ListDir" onclick="sendcontrolcommand(name)">List Directory</button>
+            </div>
+            <div id="listfilebutton" class="listfilebutton">
+                <button type="button" id="dumpfile" class="listfilebuttonon" name="ListFile" onclick="sendcontrolcommand(name)">List File</button>
+            </div>
+            <div id="rmvdirbutton" class="rmvdirbutton">
+                <button type="button" id="rmvdir" class="rmvdirbuttonon" name="RmvDir" onclick="sendcontrolcommand(name)">Remove Directory</button>
+            </div>
+            <div id="rmvfilebutton" class="rmvfilebutton">
+                <button type="button" id="dumpfile" class="rmvfilebuttonon" name="RmvFile" onclick="sendcontrolcommand(name)">Remove File</button>
+            </div>
+            <div id="clrfilebutton" class="clrfilebutton">
+                <button type="button" id="clrfile" class="clrfilebuttonon" name="ClrFile" onclick="sendcontrolcommand(name)">Clear File</button>
+            </div>
+        </div>
 
         <script>
             let server = "ws://" + window.location.hostname + ":8080/";
             let socket = null;
-            let bat_alarm = new  Audio("data:audio/wav;base64,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qJrx4KOQjahZxWbcZgztj2c49nKmkId44S71j0c8eV9yDK6uPRzx5X18eDvjvQ6yKo9ZSS6l//8elePK/Lf//IInrOF/FvDoADYAGBMGb7FtErm5MXMlmPAJQVgWta7Zx2go+8xJ0UiCb8LHHdftWyLJE0QIAIsI+UbXu67dZMjmgDGCGl1H+vpF4NSDckSIkk7Vd+sxEhBQMRU8j/12UIRhzSaUdQ+rQU5kGeFxm+hb1oh6pWWmv3uvmReDl0UnvtapVaIzo1jZbf/pD6ElLqSX+rUmOQNpJFa/r+sa4e/pBlAABoAAAAA3CUgShLdGIxsY7AUABPRrgCABdDuQ5GC7DqPQCgbbJUAoRSUj+NIEig0YfyWUho1VBBBA//uQZB4ABZx5zfMakeAAAAmwAAAAF5F3P0w9GtAAACfAAAAAwLhMDmAYWMgVEG1U0FIGCBgXBXAtfMH10000EEEEEECUBYln03TTTdNBDZopopYvrTTdNa325mImNg3TTPV9q3pmY0xoO6bv3r00y+IDGid/9aaaZTGMuj9mpu9Mpio1dXrr5HERTZSmqU36A3CumzN/9Robv/Xx4v9ijkSRSNLQhAWumap82WRSBUqXStV/YcS+XVLnSS+WLDroqArFkMEsAS+eWmrUzrO0oEmE40RlMZ5+ODIkAyKAGUwZ3mVKmcamcJnMW26MRPgUw6j+LkhyHGVGYjSUUKNpuJUQoOIAyDvEyG8S5yfK6dhZc0Tx1KI/gviKL6qvvFs1+bWtaz58uUNnryq6kt5RzOCkPWlVqVX2a/EEBUdU1KrXLf40GoiiFXK///qpoiDXrOgqDR38JB0bw7SoL+ZB9o1RCkQjQ2CBYZKd/+VJxZRRZlqSkKiws0WFxUyCwsKiMy7hUVFhIaCrNQsKkTIsLivwKKigsj8XYlwt/WKi2N4d//uQRCSAAjURNIHpMZBGYiaQPSYyAAABLAAAAAAAACWAAAAApUF/Mg+0aohSIRobBAsMlO//Kk4soosy1JSFRYWaLC4qZBYWFRGZdwqKiwkNBVmoWFSJkWFxX4FFRQWR+LsS4W/rFRb/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////VEFHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAU291bmRib3kuZGUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjAwNGh0dHA6Ly93d3cuc291bmRib3kuZGUAAAAAAAAAACU=");
+            let savefilename = "NONAME.txt";
 
             function connectSocket() {
                 document.getElementById("SM_Communication").innerHTML = '<font color="red">Connecting</font>';
+                document.getElementById("Active_File").innerHTML = '<font color="red">Not Set</font>';
 
                 socket = new WebSocket(server);
 
@@ -147,13 +306,27 @@
 
                 socket.onmessage = function(m) {
                     let sentData = m.data.split(":");
-                    if (sentData[0] == "R") {
-                        document.getElementById("response").innerHTML += m.data + "\n";
-                        document.getElementById("response").scrollTop = document.getElementById("response").scrollHeight;
-                    }
                     if (sentData[0] == "B") {
-                        document.getElementById("barcodes").innerHTML += m.data + "\n";
-                        document.getElementById("barcodes").scrollTop = document.getElementById("barcodes").scrollHeight;
+                        document.getElementById("scannedbarcodes").innerHTML += sentData[1] + "\n";
+                        document.getElementById("scannedbarcodes").scrollTop = document.getElementById("scannedbarcodes").scrollHeight;
+                    }
+                    if (sentData[0] == "C") {
+                        // clear the textbox
+                        document.getElementById("fileresponses").innerHTML = "";
+                        document.getElementById("fileresponses").scrollTop = document.getElementById("fileresponses").scrollHeight;
+                    }
+                    if (sentData[0] == "F") {
+                        savefilename = sentData[1];
+                        document.getElementById("Active_File").innerHTML = sentData[1];
+                        document.getElementById("Active_File").scrollTop = document.getElementById("Active_File").scrollHeight;
+                    }
+                    if (sentData[0] == "O") {
+                        document.getElementById("fileresponses").innerHTML += sentData[1] + "\n";
+                        document.getElementById("fileresponses").scrollTop = document.getElementById("fileresponses").scrollHeight;
+                    }
+                    if (sentData[0] == "R") {
+                        document.getElementById("response").innerHTML += sentData[1] + "\n";
+                        document.getElementById("response").scrollTop = document.getElementById("response").scrollHeight;
                     }
                 }
 
@@ -174,25 +347,40 @@
                 socket.close();
             });
 
-            function sendusercommand(cmd) {
+            function sendcontrolcommand(cmd) {
+                let userVal = null;
                 try {
-                    let userVal = document.getElementById("filename").value;
-                    socket.send(cmd + ":" + "NA" + ":" + userVal);
+                    switch(cmd) {
+                        case "Change":
+                            userVal = document.getElementById("filename").value;
+                            break;
+                        default:
+                            break;
+                    }
+                    socket.send(cmd +  ":" + userVal);
                 } catch (e) {
                     socket.onerror(e);
                 }
             }
 
-            function sendcontrolcommand(subcommand) {
-                try {
-                    socket.send(2 + ":" + subcommand);
-                } catch (e) {
-                    socket.onerror(e);
-                }
+            function savefilecommand() {
+                const textarea = document.querySelector(".fileresponses");
+
+                const blob = new Blob([textarea.value], {type: "text/plain"});
+                const fileUrl = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+
+                // just grab the filename from the 8.3 format
+                let justfilename = savefilename.split(".");
+
+                link.download = justfilename[0];
+                link.href = fileUrl;
+                link.click();
             }
 
             // play sound
             function beep() {
+                let bat_alarm = new  Audio("data:audio/wav;base64,//uQRAAAAWMSLwUIYAAsYkXgoQwAEaYLWfkWgAI0wWs/ItAAAGDgYtAgAyN+QWaAAihwMWm4G8QQRDiMcCBcH3Cc+CDv/7xA4Tvh9Rz/y8QADBwMWgQAZG/ILNAARQ4GLTcDeIIIhxGOBAuD7hOfBB3/94gcJ3w+o5/5eIAIAAAVwWgQAVQ2ORaIQwEMAJiDg95G4nQL7mQVWI6GwRcfsZAcsKkJvxgxEjzFUgfHoSQ9Qq7KNwqHwuB13MA4a1q/DmBrHgPcmjiGoh//EwC5nGPEmS4RcfkVKOhJf+WOgoxJclFz3kgn//dBA+ya1GhurNn8zb//9NNutNuhz31f////9vt///z+IdAEAAAK4LQIAKobHItEIYCGAExBwe8jcToF9zIKrEdDYIuP2MgOWFSE34wYiR5iqQPj0JIeoVdlG4VD4XA67mAcNa1fhzA1jwHuTRxDUQ//iYBczjHiTJcIuPyKlHQkv/LHQUYkuSi57yQT//uggfZNajQ3Vmz+Zt//+mm3Wm3Q576v////+32///5/EOgAAADVghQAAAAA//uQZAUAB1WI0PZugAAAAAoQwAAAEk3nRd2qAAAAACiDgAAAAAAABCqEEQRLCgwpBGMlJkIz8jKhGvj4k6jzRnqasNKIeoh5gI7BJaC1A1AoNBjJgbyApVS4IDlZgDU5WUAxEKDNmmALHzZp0Fkz1FMTmGFl1FMEyodIavcCAUHDWrKAIA4aa2oCgILEBupZgHvAhEBcZ6joQBxS76AgccrFlczBvKLC0QI2cBoCFvfTDAo7eoOQInqDPBtvrDEZBNYN5xwNwxQRfw8ZQ5wQVLvO8OYU+mHvFLlDh05Mdg7BT6YrRPpCBznMB2r//xKJjyyOh+cImr2/4doscwD6neZjuZR4AgAABYAAAABy1xcdQtxYBYYZdifkUDgzzXaXn98Z0oi9ILU5mBjFANmRwlVJ3/6jYDAmxaiDG3/6xjQQCCKkRb/6kg/wW+kSJ5//rLobkLSiKmqP/0ikJuDaSaSf/6JiLYLEYnW/+kXg1WRVJL/9EmQ1YZIsv/6Qzwy5qk7/+tEU0nkls3/zIUMPKNX/6yZLf+kFgAfgGyLFAUwY//uQZAUABcd5UiNPVXAAAApAAAAAE0VZQKw9ISAAACgAAAAAVQIygIElVrFkBS+Jhi+EAuu+lKAkYUEIsmEAEoMeDmCETMvfSHTGkF5RWH7kz/ESHWPAq/kcCRhqBtMdokPdM7vil7RG98A2sc7zO6ZvTdM7pmOUAZTnJW+NXxqmd41dqJ6mLTXxrPpnV8avaIf5SvL7pndPvPpndJR9Kuu8fePvuiuhorgWjp7Mf/PRjxcFCPDkW31srioCExivv9lcwKEaHsf/7ow2Fl1T/9RkXgEhYElAoCLFtMArxwivDJJ+bR1HTKJdlEoTELCIqgEwVGSQ+hIm0NbK8WXcTEI0UPoa2NbG4y2K00JEWbZavJXkYaqo9CRHS55FcZTjKEk3NKoCYUnSQ0rWxrZbFKbKIhOKPZe1cJKzZSaQrIyULHDZmV5K4xySsDRKWOruanGtjLJXFEmwaIbDLX0hIPBUQPVFVkQkDoUNfSoDgQGKPekoxeGzA4DUvnn4bxzcZrtJyipKfPNy5w+9lnXwgqsiyHNeSVpemw4bWb9psYeq//uQZBoABQt4yMVxYAIAAAkQoAAAHvYpL5m6AAgAACXDAAAAD59jblTirQe9upFsmZbpMudy7Lz1X1DYsxOOSWpfPqNX2WqktK0DMvuGwlbNj44TleLPQ+Gsfb+GOWOKJoIrWb3cIMeeON6lz2umTqMXV8Mj30yWPpjoSa9ujK8SyeJP5y5mOW1D6hvLepeveEAEDo0mgCRClOEgANv3B9a6fikgUSu/DmAMATrGx7nng5p5iimPNZsfQLYB2sDLIkzRKZOHGAaUyDcpFBSLG9MCQALgAIgQs2YunOszLSAyQYPVC2YdGGeHD2dTdJk1pAHGAWDjnkcLKFymS3RQZTInzySoBwMG0QueC3gMsCEYxUqlrcxK6k1LQQcsmyYeQPdC2YfuGPASCBkcVMQQqpVJshui1tkXQJQV0OXGAZMXSOEEBRirXbVRQW7ugq7IM7rPWSZyDlM3IuNEkxzCOJ0ny2ThNkyRai1b6ev//3dzNGzNb//4uAvHT5sURcZCFcuKLhOFs8mLAAEAt4UWAAIABAAAAAB4qbHo0tIjVkUU//uQZAwABfSFz3ZqQAAAAAngwAAAE1HjMp2qAAAAACZDgAAAD5UkTE1UgZEUExqYynN1qZvqIOREEFmBcJQkwdxiFtw0qEOkGYfRDifBui9MQg4QAHAqWtAWHoCxu1Yf4VfWLPIM2mHDFsbQEVGwyqQoQcwnfHeIkNt9YnkiaS1oizycqJrx4KOQjahZxWbcZgztj2c49nKmkId44S71j0c8eV9yDK6uPRzx5X18eDvjvQ6yKo9ZSS6l//8elePK/Lf//IInrOF/FvDoADYAGBMGb7FtErm5MXMlmPAJQVgWta7Zx2go+8xJ0UiCb8LHHdftWyLJE0QIAIsI+UbXu67dZMjmgDGCGl1H+vpF4NSDckSIkk7Vd+sxEhBQMRU8j/12UIRhzSaUdQ+rQU5kGeFxm+hb1oh6pWWmv3uvmReDl0UnvtapVaIzo1jZbf/pD6ElLqSX+rUmOQNpJFa/r+sa4e/pBlAABoAAAAA3CUgShLdGIxsY7AUABPRrgCABdDuQ5GC7DqPQCgbbJUAoRSUj+NIEig0YfyWUho1VBBBA//uQZB4ABZx5zfMakeAAAAmwAAAAF5F3P0w9GtAAACfAAAAAwLhMDmAYWMgVEG1U0FIGCBgXBXAtfMH10000EEEEEECUBYln03TTTdNBDZopopYvrTTdNa325mImNg3TTPV9q3pmY0xoO6bv3r00y+IDGid/9aaaZTGMuj9mpu9Mpio1dXrr5HERTZSmqU36A3CumzN/9Robv/Xx4v9ijkSRSNLQhAWumap82WRSBUqXStV/YcS+XVLnSS+WLDroqArFkMEsAS+eWmrUzrO0oEmE40RlMZ5+ODIkAyKAGUwZ3mVKmcamcJnMW26MRPgUw6j+LkhyHGVGYjSUUKNpuJUQoOIAyDvEyG8S5yfK6dhZc0Tx1KI/gviKL6qvvFs1+bWtaz58uUNnryq6kt5RzOCkPWlVqVX2a/EEBUdU1KrXLf40GoiiFXK///qpoiDXrOgqDR38JB0bw7SoL+ZB9o1RCkQjQ2CBYZKd/+VJxZRRZlqSkKiws0WFxUyCwsKiMy7hUVFhIaCrNQsKkTIsLivwKKigsj8XYlwt/WKi2N4d//uQRCSAAjURNIHpMZBGYiaQPSYyAAABLAAAAAAAACWAAAAApUF/Mg+0aohSIRobBAsMlO//Kk4soosy1JSFRYWaLC4qZBYWFRGZdwqKiwkNBVmoWFSJkWFxX4FFRQWR+LsS4W/rFRb/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////VEFHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAU291bmRib3kuZGUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjAwNGh0dHA6Ly93d3cuc291bmRib3kuZGUAAAAAAAAAACU=");
                 bat_alarm.play();
             }
         </script>
