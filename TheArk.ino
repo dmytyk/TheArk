@@ -19,7 +19,6 @@
 #include <WebSocketServer.h>
 #define _WIFININA_LOGLEVEL_       1
 #include <WiFiNINA_Generic.h>
-#include "network_parameters.h"
 #include <KeyboardController.h> 
 
 // Console Attached
@@ -28,6 +27,8 @@
     #define TerminalAttached  false
 #endif
 
+#define SECRET_SSID "The Ark Playground"
+#define SECRET_PASS "playground"
 
 // global var's
 char ssid[] = SECRET_SSID;
