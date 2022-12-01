@@ -315,7 +315,10 @@
                         document.getElementById("scannedbarcodes").scrollTop = document.getElementById("scannedbarcodes").scrollHeight;
                     }
                     if (sentData[0] == "C") {
-                        // clear the textbox
+                        // clear the barcode fields (scanned barcode and the file responses)
+                        document.getElementById("scannedbarcodes").innerHTML = "";
+                        document.getElementById("scannedbarcodes").scrollTop = document.getElementById("scannedbarcodes").scrollHeight;
+
                         document.getElementById("fileresponses").innerHTML = "";
                         document.getElementById("fileresponses").scrollTop = document.getElementById("fileresponses").scrollHeight;
                     }
@@ -325,12 +328,10 @@
                         document.getElementById("Active_File").scrollTop = document.getElementById("Active_File").scrollHeight;
                     }
                     if (sentData[0] == "L") {
-                        savefilename = sentData[1];
                         document.getElementById("BATTERY_STATUS").innerHTML = '<font color="red">' + sentData[1] + '</font>';
                         document.getElementById("BATTERY_STATUS").scrollTop = document.getElementById("BATTERY_STATUS").scrollHeight;
                     }
                     if (sentData[0] == "N") {
-                        savefilename = sentData[1];
                         document.getElementById("BATTERY_STATUS").innerHTML = '<font color="black">' + sentData[1] + '</font>';
                         document.getElementById("BATTERY_STATUS").scrollTop = document.getElementById("BATTERY_STATUS").scrollHeight;
                     }
