@@ -19,7 +19,7 @@
             }
             div.usercontrol {
                 position: absolute;
-                top: 80px;
+                top: 100px;
                 left: 15px;
             }
             div.filecontrol {
@@ -29,22 +29,22 @@
             }
             div.beepbutton {
                 position: absolute;
-                top: 280px;
+                top: 297px;
                 left: 15px;
             }
             div.ledonbutton {
                 position: absolute;
-                top: 280px;
+                top: 297px;
                 left: 180px;
             }
             div.ledoffbutton {
                 position: absolute;
-                top: 324px;
+                top: 340px;
                 left: 180px;
             }
             div.rstbutton {
                 position: absolute;
-                top: 324px;
+                top: 340px;
                 left: 15px;
             }
             div.listdirbutton {
@@ -204,10 +204,13 @@
         <div class="wifistatus">
             <table style="background-color: #ffffff; border:2px black solid;">
                 <tr>
-                    <td colspan="2" align="center" style="border:1px black solid; width:300px;"><b>WiFi Connection Status</b></td>
+                    <td colspan="2" align="center" style="border:1px black solid; width:300px;"><b>System Status</b></td>
                 </tr>
                 <tr>
-                    <td>Communication Link :</td><td id="SM_Communication"></td>
+                    <td>WiFi Communication Link :</td><td id="SM_Communication"></td>
+                </tr>
+                <tr>
+                    <td>Battery Voltage :</td><td id="BATTERY_STATUS"></td>
                 </tr>
             </table>
         </div>
@@ -219,7 +222,7 @@
                 </tr>
                 <tr>
                     <td>Filename:</td>
-                    <td><input type="text" id="filename" size="14" maxlength="8">&nbsp;<button type="button" name="Change" class="commandbutton" onclick="sendcontrolcommand(name)">Change</button></td>
+                    <td><input type="text" id="filename" size="13" maxlength="8">&nbsp;<button type="button" name="Change" class="commandbutton" onclick="sendcontrolcommand(name)">Change</button></td>
                 </tr>
                 <tr>
                     <td colspan="2" align="center">Command Responses</td>
@@ -248,7 +251,7 @@
                 <td colspan="2" align="center">File Responses</td>
                 </tr>
                 <tr>
-                    <td colspan="2" ><textarea name="fileresponses" id="fileresponses" class="fileresponses" rows="12" cols="21"></textarea></td>
+                    <td colspan="2" ><textarea name="fileresponses" id="fileresponses" class="fileresponses" rows="13" cols="21"></textarea></td>
                 </tr>
             </table>
         </div>
@@ -296,6 +299,7 @@
 
             function connectSocket() {
                 document.getElementById("SM_Communication").innerHTML = '<font color="red">Connecting</font>';
+                document.getElementById("BATTERY_STATUS").innerHTML = '<font color="red">0.0</font>';
                 document.getElementById("Active_File").innerHTML = '<font color="red">Not Set</font>';
 
                 socket = new WebSocket(server);
@@ -319,6 +323,16 @@
                         savefilename = sentData[1];
                         document.getElementById("Active_File").innerHTML = sentData[1];
                         document.getElementById("Active_File").scrollTop = document.getElementById("Active_File").scrollHeight;
+                    }
+                    if (sentData[0] == "L") {
+                        savefilename = sentData[1];
+                        document.getElementById("BATTERY_STATUS").innerHTML = '<font color="red">' + sentData[1] + '</font>';
+                        document.getElementById("BATTERY_STATUS").scrollTop = document.getElementById("BATTERY_STATUS").scrollHeight;
+                    }
+                    if (sentData[0] == "N") {
+                        savefilename = sentData[1];
+                        document.getElementById("BATTERY_STATUS").innerHTML = '<font color="black">' + sentData[1] + '</font>';
+                        document.getElementById("BATTERY_STATUS").scrollTop = document.getElementById("BATTERY_STATUS").scrollHeight;
                     }
                     if (sentData[0] == "O") {
                         document.getElementById("fileresponses").innerHTML += sentData[1] + "\n";

@@ -24,7 +24,7 @@
 // Console Attached
 #ifndef TerminalAttached
     // true = terminal attached (send serial messages), false = no terminal attached no messages 
-    #define TerminalAttached  false
+    #define TerminalAttached  true
 #endif
 
 #define SECRET_SSID "The Ark Playground"
@@ -36,7 +36,8 @@ char pass[] = SECRET_PASS;
 const short webPort     = 80;
 const short socketPort  = 8080;
 int status = WL_IDLE_STATUS;
-
+int sectimer = 0;
+uint32_t loop_timer;
 
 // WiFi
 WiFiServer      WebServer(webPort);
@@ -63,13 +64,18 @@ uint8_t receive_buffer_counter;
 int receive_byte;
 
 
+// Battery Monitor
+float low_battery_warning = 10.5;          //Set the battery warning at 10.5V (default = 10.5V).
+float battery_voltage;
+int batterycounter = 0;
+
 // Background
 boolean Backgroundinit = true;
-uint8_t led = 0;
+int led = 0;
 
 
 // ARK webpage, gzipped and base64 encoding to save space
-char webpage_base64[] = "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";
+char webpage_base64[] = "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";
 
 
 
@@ -180,8 +186,8 @@ void listDirectory(File dir) {
 // SETUP
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
-  pinMode(2, OUTPUT);                                   // Green LED
-  pinMode(3, OUTPUT);                                   // Red LED
+  pinMode(2, OUTPUT);                            // Green LED
+  analogReadResolution(12);
   
   receive_buffer_counter = 0;
   
@@ -261,7 +267,17 @@ void setup() {
       Serial.println("Directory Created: /ARK");  
     }
   }
-
+  
+  //Load the battery voltage to the battery_voltage variable.
+  //The MRK1010 default is a 10 bit analog to digital converter, we need to set it to 12 bit
+  //analogRead => 0 = 0V ..... 4095 = 3.3V
+  //The voltage divider (1k & 10k) is 1:11.
+  //analogRead => 0 = 0V ..... 4095 = 36.3V
+  //36.3 / 4095 = 112.81.
+  //The variable battery_voltage holds 1050 if the battery voltage is 10.5V.
+  analogReadResolution(12);
+  battery_voltage = (float)analogRead(4) / 112.81;
+  
   // show that we have completed all setup
   digitalWrite(2, HIGH);
   delay(5000);
@@ -570,13 +586,51 @@ void loop() {
       }
     }
   }
+
+
+  // Background Process 3 - get battery voltage
+  //The battery voltage is needed for compensation.
+  //A complementary filter is used to reduce noise.
+  //1410.1 = 112.81 / 0.08.
+  battery_voltage = battery_voltage * 0.92 + ((float)analogRead(4) / 1410.1);
   
-  // Background Process 3 - heart beat
-  if(led == 0) {
-    led = 1;
-    digitalWrite(LED_BUILTIN, HIGH);
-  } else {
-    led = 0;
-    digitalWrite(LED_BUILTIN, LOW);
+
+  // Background Process 4 - make a 1 second timer
+  switch(sectimer) {
+    case 0:
+        loop_timer = micros();
+        sectimer = 1;
+    break;
+    case 1:
+        // 1 second has passed so do functions
+        if(micros() - loop_timer > 1000000) {
+            // flash the heart beat
+            if(led == 0) {
+                digitalWrite(LED_BUILTIN, HIGH);
+                led = 1;
+            } else {
+                digitalWrite(LED_BUILTIN, LOW);
+                led = 0;
+            }
+
+            // send the battery status every 15 seconds
+            if(batterycounter++ > 10) {
+                if (battery_voltage < low_battery_warning) {
+                    if(socketClient.connected()) {
+                        webSocketServer.sendData("L:" + String(battery_voltage));
+                    }    
+                } else {
+                    // too low send error message  
+                    if(socketClient.connected()) {
+                        webSocketServer.sendData("N:" + String(battery_voltage));
+                    }
+                }
+                batterycounter = 0;
+            }
+
+            // reset the timer
+            sectimer = 0;
+        }
+    break;
   }
 }
