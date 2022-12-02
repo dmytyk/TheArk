@@ -19,18 +19,18 @@
 #include <WebSocketServer.h>
 #define _WIFININA_LOGLEVEL_       1
 #include <WiFiNINA_Generic.h>
-#include <KeyboardController.h> 
+#include <KeyboardController.h>
 
 // Console Attached
 #ifndef TerminalAttached
     // true = terminal attached (send serial messages), false = no terminal attached no messages 
-    #define TerminalAttached  true
+    #define TerminalAttached  false
 #endif
 
 #define SECRET_SSID "The Ark Playground"
 #define SECRET_PASS "playground"
 
-// global var's
+// global vars
 char ssid[] = SECRET_SSID;
 char pass[] = SECRET_PASS;
 const short webPort     = 80;
@@ -75,7 +75,7 @@ int led = 0;
 
 
 // ARK webpage, gzipped and base64 encoding to save space
-char webpage_base64[] = "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";
+char webpage_base64[] = "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";
 
 
 
@@ -95,53 +95,53 @@ void printWifiStatus()
   }
 }
 
-// Process a reset request
-void reset_data(void){
-    // clear the file responses box
-    webSocketServer.sendData("C:");
-}
-
 // check to see if the scanner send some data
-void keyPressed() { 
-    // get a character
-    receive_byte = keyboard.getKey();
+void keyPressed() {
+   // get a character
+   receive_byte = keyboard.getKey();
 
-    // discard line feeds
-    if(receive_byte != 0x0a) {
-        //add it to the capture buffer
-        receive_buffer[receive_buffer_counter++] = receive_byte;
-    }
+   // discard line feeds
+   if(receive_byte != 0x0a) {
+       //add it to the capture buffer
+       receive_buffer[receive_buffer_counter++] = receive_byte;
+   }
 
-    // see if it is the end on the capture
-    if(receive_byte == 0x0d) {
-        // if so end the buffer
-        receive_buffer[receive_buffer_counter] = byte(0);
+   // see if it is the end on the capture
+   if(receive_byte == 0x0d) {
+       // if so end the buffer
+       receive_buffer[receive_buffer_counter] = byte(0);
 
-        // format it for sending over the websocket
-        String s = String(receive_buffer);
-        webSocketServer.sendData("B:" + s);
+       // format it for sending over the websocket, only sent it id we are connected, the user could be scanning with no connection
+       String s = String(receive_buffer);
+       if(socketClient.connected()) {
+           webSocketServer.sendData("B:" + s);
+       }
 
-        // CHECK to see if a specific file is available
-        // if the file is available, write to it:
-        if(SD.exists(sdName)) {
-            // WRITE data to the file
-            ARK = SD.open(sdName, FILE_WRITE);
-            if (ARK) {
-                ARK.print(s);
-                ARK.close();
-                if(TerminalAttached) {
-                  Serial.println(s);
-                }
-            } else {
-                Serial.println("Error Opening: " + String(sdName));
-            }
-        } else {
-            Serial.println("Error File Not Available: " + String(sdName));
-        }
+       // CHECK to see if a specific file is available
+       // if the file is available, write to it:
+       if(SD.exists(sdName)) {
+           // WRITE data to the file
+           ARK = SD.open(sdName, FILE_WRITE);
+           if (ARK) {
+               ARK.print(s);
+               ARK.close();
+               if(TerminalAttached) {
+                 Serial.println(s);
+               }
+           } else {
+               if(TerminalAttached) {
+                   Serial.println("Error Opening: " + String(sdName));
+               }
+           }
+       } else {
+           if(TerminalAttached) {
+               Serial.println("Error File Not Available: " + String(sdName));
+           }
+       }
 
-        //reset the buffer pointer
-        receive_buffer_counter = 0;
-    }
+       //reset the buffer pointer
+       receive_buffer_counter = 0;
+   }
 }
 
 // list the "/ARK" directory contents  
@@ -187,13 +187,12 @@ void listDirectory(File dir) {
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(2, OUTPUT);                            // Green LED
-  analogReadResolution(12);
   
   receive_buffer_counter = 0;
   
   if(TerminalAttached) {  
-    Serial.begin(57600);
-    delay(1000);
+    Serial.begin(9600);
+    delay(2000);
   } 
   
   // check for the WiFi module:
@@ -207,8 +206,6 @@ void setup() {
   
   // check and make sure we are using the lastest Firmware
   String fv = WiFi.firmwareVersion();
-
-  // Serial port initialization
   if(TerminalAttached) {
      Serial.println("Version " + String(WIFININA_GENERIC_VERSION));
 
@@ -236,7 +233,7 @@ void setup() {
     }
     
     // don't continue
-    while (true);
+    while (1);
   }
 
   // start the web and socket servers
@@ -251,9 +248,9 @@ void setup() {
   if (!SD.begin(chipSelect)) {
     if(TerminalAttached) {
       Serial.println("Card failed, or not present");
-      // don't do anything more:
-      while (1);
     }
+    // don't do anything more:
+    while (1);
   }
   if(TerminalAttached) {
     Serial.println("Card Initialized.");
@@ -280,7 +277,7 @@ void setup() {
   
   // show that we have completed all setup
   digitalWrite(2, HIGH);
-  delay(5000);
+  delay(1000);
   digitalWrite(2, LOW);
 }
 
@@ -291,7 +288,7 @@ void setup() {
 void loop() {
   // Background Process 1 - poll the barcode scanner
   // poll the USB Host device, in this case the Barcode Reader
-  usb.Task(); 
+  usb.Task();
 
   // Background Process 2 - process the web interface
   // compare the previous status to the current status
@@ -310,6 +307,10 @@ void loop() {
       if(TerminalAttached) {
         Serial.println("Device disconnected from AP");
       }
+
+      // make sure the socket is also stopped, in case we want to reconnect
+      socketClient.stop();
+      delay(100);
     }
   }
 
@@ -383,28 +384,23 @@ void loop() {
     }
   }
 
-  if(!socketClient.connected()) 
-  {
+  if(!socketClient.connected()) {
+    // we are not connect to a socket so keep listening
     socketClient = socketServer.available();
     
-    if (socketClient.connected() && webSocketServer.handshake(socketClient)) 
-    {
+    if (socketClient.connected() && webSocketServer.handshake(socketClient)) {
        if(TerminalAttached) {
            Serial.print("\n--Websocket connected to: ");
            Serial.print(socketClient.remoteIP());
            Serial.print(":");
            Serial.println(socketClient.remotePort());
        }
-    } 
-    else 
-    {
+    } else {
         socketClient.stop();
         delay(100);
     }
-  }
-
-  if(socketClient.connected()) 
-  {
+  } else {
+    // we have a good socket so process the connection
     // Background Init - setup the background tasks, runs only once
     if(Backgroundinit == true) {
         Backgroundinit = false;
@@ -455,9 +451,11 @@ void loop() {
       } else if (cmd == "Ledoff") {
             digitalWrite(2, LOW);
             webSocketServer.sendData("R:" + cmd);
-      } else if (cmd == "Rst") {
-            reset_data();
-            webSocketServer.sendData("R:" + cmd);
+      } else if (cmd == "ReSet") {
+            // do local reset stuff
+
+            // send reset response to tell webpage to reset
+            webSocketServer.sendData("Z:" + cmd);
       } else if (cmd == "Change") {
             // build the full directory and file name
             fileName = "/ARK/";  // directory
@@ -611,7 +609,7 @@ void loop() {
     break;
     case 1:
         // 1 second has passed so do functions
-        if(micros() - loop_timer > 1000000) {
+        if(micros() - loop_timer > 2000000) {
             // flash the heart beat
             if(led == 0) {
                 digitalWrite(LED_BUILTIN, HIGH);
@@ -621,20 +619,21 @@ void loop() {
                 led = 0;
             }
 
-            // send the battery status every 15 seconds
-            if(batterycounter++ > 10) {
-                if (battery_voltage < low_battery_warning) {
-                    if(socketClient.connected()) {
-                        webSocketServer.sendData("L:" + String(battery_voltage));
-                    }    
-                } else {
-                    // too low send error message  
-                    if(socketClient.connected()) {
-                        webSocketServer.sendData("N:" + String(battery_voltage));
-                    }
-                }
-                batterycounter = 0;
-            }
+           // send the battery status every 15 seconds
+           if(batterycounter++ > 10) {
+               if (battery_voltage < low_battery_warning) {
+                   // too low send error message
+                   if(socketClient.connected()) {
+                       webSocketServer.sendData("L:" + String(battery_voltage));
+                   }
+               } else {
+                   // send the normal battery update
+                   if(socketClient.connected()) {
+                       webSocketServer.sendData("N:" + String(battery_voltage));
+                   }
+               }
+               batterycounter = 0;
+           }
 
             // reset the timer
             sectimer = 0;

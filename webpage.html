@@ -267,10 +267,10 @@
                 <button type="button" id="ledoff" class="ledbuttonoff" name="Ledoff" onclick="sendcontrolcommand(name)">Led Off</button>
             </div>
             <div id="rstbutton" class="rstbutton">
-                <button type="button" id="rst" class="rstbuttonon" name="Rst" onclick="sendcontrolcommand(name)">Reset</button>
+                <button type="button" id="ReSet" class="rstbuttonon" name="ReSet" onclick="sendcontrolcommand(name)">Reset</button>
             </div>
             <div id="savefilebutton" class="savefilebutton">
-                <button type="button" id="rst" class="savefilebuttonon" name="SavFile" onclick="savefilecommand()">Save File</button>
+                <button type="button" id="SavFile" class="savefilebuttonon" name="SavFile" onclick="savefilecommand()">Save File</button>
             </div>
         </div>
 
@@ -295,7 +295,7 @@
         <script>
             let server = "ws://" + window.location.hostname + ":8080/";
             let socket = null;
-            let savefilename = "NONAME.txt";
+            let savefilename = "NOTSET.txt";
 
             function connectSocket() {
                 document.getElementById("SM_Communication").innerHTML = '<font color="red">Connecting</font>';
@@ -311,29 +311,22 @@
                 socket.onmessage = function(m) {
                     let sentData = m.data.split(":");
                     if (sentData[0] == "B") {
-                        document.getElementById("scannedbarcodes").innerHTML += sentData[1] + "\n";
-                        document.getElementById("scannedbarcodes").scrollTop = document.getElementById("scannedbarcodes").scrollHeight;
+                        document.getElementById("scannedbarcodes").innerHTML = sentData[1] + "\n";
                     }
                     if (sentData[0] == "C") {
-                        // clear the barcode fields (scanned barcode and the file responses)
-                        document.getElementById("scannedbarcodes").innerHTML = "";
-                        document.getElementById("scannedbarcodes").scrollTop = document.getElementById("scannedbarcodes").scrollHeight;
-
+                        // clear the file response textbox
                         document.getElementById("fileresponses").innerHTML = "";
                         document.getElementById("fileresponses").scrollTop = document.getElementById("fileresponses").scrollHeight;
                     }
                     if (sentData[0] == "F") {
                         savefilename = sentData[1];
-                        document.getElementById("Active_File").innerHTML = sentData[1];
-                        document.getElementById("Active_File").scrollTop = document.getElementById("Active_File").scrollHeight;
+                        document.getElementById("Active_File").innerHTML = savefilename;
                     }
                     if (sentData[0] == "L") {
                         document.getElementById("BATTERY_STATUS").innerHTML = '<font color="red">' + sentData[1] + '</font>';
-                        document.getElementById("BATTERY_STATUS").scrollTop = document.getElementById("BATTERY_STATUS").scrollHeight;
                     }
                     if (sentData[0] == "N") {
                         document.getElementById("BATTERY_STATUS").innerHTML = '<font color="black">' + sentData[1] + '</font>';
-                        document.getElementById("BATTERY_STATUS").scrollTop = document.getElementById("BATTERY_STATUS").scrollHeight;
                     }
                     if (sentData[0] == "O") {
                         document.getElementById("fileresponses").innerHTML += sentData[1] + "\n";
@@ -341,6 +334,20 @@
                     }
                     if (sentData[0] == "R") {
                         document.getElementById("response").innerHTML += sentData[1] + "\n";
+                        document.getElementById("response").scrollTop = document.getElementById("response").scrollHeight;
+                    }
+                    if (sentData[0] == "Z") {
+                        // this is the reset response
+                        savefilename = "";
+                        document.getElementById("Active_File").innerHTML = '<font color="red">Not Set</font>';
+
+                        // clear the barcode field (scanned barcode)
+                        document.getElementById("scannedbarcodes").innerHTML = "";
+
+                        document.getElementById("fileresponses").innerHTML = "";
+                        document.getElementById("fileresponses").scrollTop = document.getElementById("fileresponses").scrollHeight;
+
+                        document.getElementById("response").innerHTML = sentData[1] + "\n";
                         document.getElementById("response").scrollTop = document.getElementById("response").scrollHeight;
                     }
                 }
