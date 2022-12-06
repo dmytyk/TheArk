@@ -22,7 +22,12 @@
                 top: 100px;
                 left: 15px;
             }
-            div.filecontrol {
+            div.createprj {
+                position: absolute;
+                top: 15px;
+                left: 345px;
+            }
+            div.displayprj {
                 position: absolute;
                 top: 15px;
                 left: 345px;
@@ -72,9 +77,14 @@
                 top: 195px;
                 left: 545px;
             }
-            div.savefilebutton {
+            div.uploadfilebutton {
                 position: absolute;
                 top: 240px;
+                left: 545px;
+            }
+            div.toggleprjbutton {
+                position: absolute;
+                top: 340px;
                 left: 545px;
             }
 
@@ -187,7 +197,18 @@
                 cursor: pointer;
                 text-align: center;
             }
-            .savefilebuttonon {
+            .uploadfilebuttonon {
+                border: solid;
+                border-color: black;
+                background-color: Green;
+                color: white;
+                padding: 5px 5px;
+                width: 120px;
+                font-size: 12px;
+                cursor: pointer;
+                text-align: center;
+            }
+            .toggleprjinfo {
                 border: solid;
                 border-color: black;
                 background-color: Orange;
@@ -198,6 +219,7 @@
                 cursor: pointer;
                 text-align: center;
             }
+
         </style>
     </head>
     <body>
@@ -221,7 +243,7 @@
                     <td colspan="2" align="center" style="border:1px black solid; width:300px;"><b>Setup / Configuration</b></td>
                 </tr>
                 <tr>
-                    <td>Filename:</td>
+                    <td>Project:</td>
                     <td><input type="text" id="filename" size="13" maxlength="8">&nbsp;<button type="button" name="Change" class="commandbutton" onclick="sendcontrolcommand(name)">Change</button></td>
                 </tr>
                 <tr>
@@ -233,25 +255,49 @@
             </table>
         </div>
 
-        <div class="filecontrol">
+        <div id="createprj" class="createprj">
             <table style="background-color: #ffffff; border:2px black solid;">
                 <tr>
-                    <td colspan="2" align="center" style="border:1px black solid; width:175px;"><b>File Control</b></td>
+                    <td colspan="2" align="center" style="border:1px black solid; width:175px;"><b>Create Project</b></td>
                 </tr>
                 <tr>
                     <td align="center">Active File:</td><td id="Active_File"></td>
                 </tr>
                 <tr>
-                    <td colspan="2" align="center">Scanned BarCodes</td>
+                    <td colspan="2" align="center">Scanned BarCode</td>
                 </tr>
                 <tr>
-                    <td colspan="2" ><textarea name="scannedbarcodes" id="scannedbarcodes" class="scannedbarcodes" rows="2" cols="21" readonly></textarea></td>
+                    <td colspan="2" ><textarea name="scannedbarcodes" id="scannedbarcodes" class="scannedbarcodes" rows="1" cols="21" readonly></textarea></td>
                 </tr>
                 <tr>
-                <td colspan="2" align="center">File Responses</td>
+                    <td colspan="2" align="center">Create Responses</td>
                 </tr>
                 <tr>
-                    <td colspan="2" ><textarea name="fileresponses" id="fileresponses" class="fileresponses" rows="13" cols="21"></textarea></td>
+                    <td colspan="2" ><textarea name="fileresponses" id="fileresponses" class="fileresponses" rows="14" cols="21"></textarea></td>
+                </tr>
+            </table>
+        </div>
+
+        <div id="displayprj" class="displayprj">
+            <table style="background-color: #ffffff; border:2px black solid;">
+                <tr>
+                    <td colspan="2" align="center" style="border:1px black solid; width:175px;"><b>Display Project</b></td>
+                </tr>
+                <tr>
+                    <td align="center">&nbsp;</td></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">Read BarCode</td>
+                </tr>
+                <tr>
+                    <td colspan="2" ><textarea name="readbarcodes" id="readbarcodes" class="readbarcodes" rows="1" cols="21" readonly></textarea></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">Read Responses</td>
+                </tr>
+                </tr>
+                <tr>
+                    <td colspan="2" ><textarea name="readresponses" id="readresponses" class="readresponses" rows="14" cols="21"></textarea></td>
                 </tr>
             </table>
         </div>
@@ -269,33 +315,46 @@
             <div id="rstbutton" class="rstbutton">
                 <button type="button" id="ReSet" class="rstbuttonon" name="ReSet" onclick="sendcontrolcommand(name)">Reset</button>
             </div>
-            <div id="savefilebutton" class="savefilebutton">
-                <button type="button" id="SavFile" class="savefilebuttonon" name="SavFile" onclick="savefilecommand()">Save File</button>
-            </div>
         </div>
 
-        <div>
+        <div id="createprjbuttons" class="createprjbuttons">
             <div id="listdirbutton" class="listdirbutton">
-                <button type="button" id="listdir" class="listdirbuttonon" name="ListDir" onclick="sendcontrolcommand(name)">List Directory</button>
+                <button type="button" id="listdir" class="listdirbuttonon" name="ListDir" onclick="sendcontrolcommand(name)">Show Projects</button>
             </div>
             <div id="listfilebutton" class="listfilebutton">
-                <button type="button" id="dumpfile" class="listfilebuttonon" name="ListFile" onclick="sendcontrolcommand(name)">List File</button>
+                <button type="button" id="dumpfile" class="listfilebuttonon" name="ListFile" onclick="sendcontrolcommand(name)">Show Project</button>
             </div>
             <div id="rmvdirbutton" class="rmvdirbutton">
                 <button type="button" id="rmvdir" class="rmvdirbuttonon" name="RmvDir" onclick="sendcontrolcommand(name)">Remove Directory</button>
             </div>
             <div id="rmvfilebutton" class="rmvfilebutton">
-                <button type="button" id="dumpfile" class="rmvfilebuttonon" name="RmvFile" onclick="sendcontrolcommand(name)">Remove File</button>
+                <button type="button" id="dumpfile" class="rmvfilebuttonon" name="RmvFile" onclick="sendcontrolcommand(name)">Remove Project</button>
             </div>
             <div id="clrfilebutton" class="clrfilebutton">
-                <button type="button" id="clrfile" class="clrfilebuttonon" name="ClrFile" onclick="sendcontrolcommand(name)">Clear File</button>
+                <button type="button" id="clrfile" class="clrfilebuttonon" name="ClrFile" onclick="sendcontrolcommand(name)">Clear Project</button>
+            </div>
+            <div id="uploadfilebutton" class="uploadfilebutton">
+                <button type="button" id="UpdFile" class="uploadfilebuttonon" name="UpdFile" onclick="uploadfilecommand()">Download Project</button>
+            </div>
+            <div id="toggleprjbutton" class="toggleprjbutton">
+                <button type="button" class="toggleprjinfo" onclick="toggleprj()">Project Mode</button>
+            </div>
+        </div>
+
+        <div id="displayprjbuttons" class="displayprjbuttons">
+            <div id="toggleprjbutton" class="toggleprjbutton">
+                <button type="button" name="0" class="toggleprjinfo" onclick="toggleprj()">Project Mode</button>
             </div>
         </div>
 
         <script>
             let server = "ws://" + window.location.hostname + ":8080/";
             let socket = null;
-            let savefilename = "NOTSET.txt";
+            let savefilename = "Not Set";
+            document.getElementById('createprj').style.display = 'block';
+            document.getElementById('createprjbuttons').style.display = 'block';
+            document.getElementById('displayprj').style.display = 'none';
+            document.getElementById('displayprjbuttons').style.display = 'none';
 
             function connectSocket() {
                 document.getElementById("SM_Communication").innerHTML = '<font color="red">Connecting</font>';
@@ -311,12 +370,27 @@
                 socket.onmessage = function(m) {
                     let sentData = m.data.split(":");
                     if (sentData[0] == "B") {
-                        document.getElementById("scannedbarcodes").innerHTML = sentData[1] + "\n";
+                        let barcodestate = document.getElementById('createprj').style.display;
+                        if (barcodestate == 'block') {
+                            document.getElementById("scannedbarcodes").innerHTML = sentData[1] + "\n";
+                        } else {
+                            document.getElementById("readbarcodes").innerHTML = sentData[1] + "\n";
+                        }
                     }
                     if (sentData[0] == "C") {
-                        // clear the file response textbox
-                        document.getElementById("fileresponses").innerHTML = "";
-                        document.getElementById("fileresponses").scrollTop = document.getElementById("fileresponses").scrollHeight;
+                        if(sentData[1] == "O") {
+                            // clear the file response textbox
+                            document.getElementById("fileresponses").innerHTML = "";
+                            document.getElementById("fileresponses").scrollTop = document.getElementById("fileresponses").scrollHeight;
+                        } else {
+                            // clear the read response textbox
+                            document.getElementById("readresponses").innerHTML = "";
+                            document.getElementById("readresponses").scrollTop = document.getElementById("readresponses").scrollHeight;
+                        }
+                    }
+                    if (sentData[0] == "D") {
+                        document.getElementById("readresponses").innerHTML += sentData[1] + "\n";
+                        document.getElementById("readresponses").scrollTop = document.getElementById("readresponses").scrollHeight;
                     }
                     if (sentData[0] == "F") {
                         savefilename = sentData[1];
@@ -324,6 +398,7 @@
                     }
                     if (sentData[0] == "L") {
                         document.getElementById("BATTERY_STATUS").innerHTML = '<font color="red">' + sentData[1] + '</font>';
+                        beep();
                     }
                     if (sentData[0] == "N") {
                         document.getElementById("BATTERY_STATUS").innerHTML = '<font color="black">' + sentData[1] + '</font>';
@@ -338,7 +413,9 @@
                     }
                     if (sentData[0] == "Z") {
                         // this is the reset response
-                        savefilename = "";
+                        document.getElementById("filename").value = "";
+
+                        savefilename = "Not Set";
                         document.getElementById("Active_File").innerHTML = '<font color="red">Not Set</font>';
 
                         // clear the barcode field (scanned barcode)
@@ -347,8 +424,11 @@
                         document.getElementById("fileresponses").innerHTML = "";
                         document.getElementById("fileresponses").scrollTop = document.getElementById("fileresponses").scrollHeight;
 
-                        document.getElementById("response").innerHTML = sentData[1] + "\n";
-                        document.getElementById("response").scrollTop = document.getElementById("response").scrollHeight;
+                        // clear the barcode field (read barcode)
+                        document.getElementById("readbarcodes").innerHTML = "";
+
+                        document.getElementById("readresponses").innerHTML = "";
+                        document.getElementById("readresponses").scrollTop = document.getElementById("readresponses").scrollHeight;
                     }
                 }
 
@@ -374,7 +454,16 @@
                 try {
                     switch(cmd) {
                         case "Change":
-                            userVal = document.getElementById("filename").value;
+                            userVal = (document.getElementById("filename").value).trim();
+                            if(userVal == "") {
+                                document.getElementById("response").innerHTML += "Err - No Project" + "\n";
+                                document.getElementById("response").scrollTop = document.getElementById("response").scrollHeight;
+                                return;
+                            }
+                            break;
+                        case "ListDir":
+                            savefilename = "Projects.txt";
+                            document.getElementById("Active_File").innerHTML = '<font color="black">Projects.txt</font>';
                             break;
                         default:
                             break;
@@ -385,19 +474,61 @@
                 }
             }
 
-            function savefilecommand() {
-                const textarea = document.querySelector(".fileresponses");
-
-                const blob = new Blob([textarea.value], {type: "text/plain"});
-                const fileUrl = URL.createObjectURL(blob);
-                const link = document.createElement("a");
-
+            function uploadfilecommand() {
                 // just grab the filename from the 8.3 format
                 let justfilename = savefilename.split(".");
 
-                link.download = justfilename[0];
-                link.href = fileUrl;
-                link.click();
+                //make sure we have a filename
+                if(justfilename[0] == "Not Set") {
+                    // clear the file response textbox
+                    document.getElementById("fileresponses").innerHTML = "";
+                    document.getElementById("fileresponses").scrollTop = document.getElementById("fileresponses").scrollHeight;
+
+                    // set it to not found
+                    document.getElementById("fileresponses").innerHTML = "File Not Found";
+                    document.getElementById("fileresponses").scrollTop = document.getElementById("fileresponses").scrollHeight;
+                } else {
+                    const textarea = document.querySelector(".fileresponses");
+                    const blob = new Blob([textarea.value], {type: "text/plain"});
+                    const fileUrl = URL.createObjectURL(blob);
+                    const link = document.createElement("a");
+
+                    // create the link and auto click it
+                    link.download = justfilename[0];
+                    link.href = fileUrl;
+                    link.click();
+                }
+            }
+
+            function toggleprj() {
+                let state = document.getElementById('createprj').style.display;
+                if (state == 'block') {
+                    // make display active
+                    document.getElementById('createprj').style.display = 'none';
+                    document.getElementById('createprjbuttons').style.display = 'none';
+                    document.getElementById('displayprj').style.display = 'block';
+                    document.getElementById('displayprjbuttons').style.display = 'block';
+
+                    // clear the barcode field (read barcode)
+                    document.getElementById("readbarcodes").innerHTML = "";
+                    document.getElementById("readresponses").innerHTML = "";
+                    document.getElementById("readresponses").scrollTop = document.getElementById("readresponses").scrollHeight;
+
+                    sendcontrolcommand("DspPrj");
+                } else {
+                    // make create active
+                    document.getElementById('createprj').style.display = 'block';
+                    document.getElementById('createprjbuttons').style.display = 'block';
+                    document.getElementById('displayprj').style.display = 'none';
+                    document.getElementById('displayprjbuttons').style.display = 'none';
+
+                    // clear the barcode field (scanned barcode)
+                    document.getElementById("scannedbarcodes").innerHTML = "";
+                    document.getElementById("fileresponses").innerHTML = "";
+                    document.getElementById("fileresponses").scrollTop = document.getElementById("fileresponses").scrollHeight;
+
+                    sendcontrolcommand("CrtPrj");
+                }
             }
 
             // play sound
