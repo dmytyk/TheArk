@@ -5,7 +5,7 @@
 
 <h1>Inventory Project using an Access Point Web Interface with a Barcode Scanner</h1>
 
-I created a YouTube video that provides additional details and a demonstration, the Link is: [The Ark Video](https://www.youtube.com/watch?v=oKCXiYc311A&t=149s)
+I created a YouTube video that provides additional details and a demonstration, the Link is: [The Ark Video](https://youtu.be/7wXU4oj81e4)
 
 The Ark uses 4 key components an Arduino MKR1010 controller, Arduino MKR MEM Shield (with 16GB SD card formatted as FAT32), BT 2D Barcode Scanner and a Micro Type B to USB Female Hub cable.  A prototype was constructed:
 
@@ -44,6 +44,8 @@ I plan on encasing the prototype in a project box for production use.
 #### Arduino Software Notes
 
 > - Libraries needed : <SPI.h>, <SD.h>, <global.h>, <base64.h>, <WebSocketClient.h>, <WebSocketServer.h>, <WiFiNINA_Generic.h> and <KeyboardController.h>
+> - YouTube video that shows how to encode a WEB Page for the Arduino : [WEB Page Encoding](https://youtu.be/oKCXiYc311A) skip to the 2:22 mark
+
 
 #### Schematic for the project
 
