@@ -5,6 +5,8 @@
 
 <h1>Inventory Project using an Access Point Web Interface with a Barcode Scanner</h1>
 
+I created a YouTube video that provides additional details and a demonstration, the Link is: [The Ark Video](https://www.youtube.com/watch?v=oKCXiYc311A&t=149s)
+
 The Ark uses 4 key components an Arduino MKR1010 controller, Arduino MKR MEM Shield (with 16GB SD card formatted as FAT32), BT 2D Barcode Scanner and a Micro Type B to USB Female Hub cable.  A prototype was constructed:
 
 ![Prototype](/Images/Prototype.jpg)
@@ -16,7 +18,7 @@ I plan on encasing the prototype in a project box for production use.
 
 > - Power on The Ark (if the /ARK directory is not found it will create it automatically)
 > - Connect to the Access Point (you will get served a Web Page Interface)
-> - Enter a Project Name (this will create a project with the name entered)
+> - Enter a Project Name (this will create a project with the name entered if it does not exist)
 > - Start scanner barcodes (That's It!)
 
 #### Project Operations
@@ -33,11 +35,16 @@ I plan on encasing the prototype in a project box for production use.
 #### Project Notes
 
 > - The Barcode Scanner can be recharged from The ARK by removing the USB dongle and attaching it to the ARK via the USB cable it comes with
-> - The Ark has a power monitor circuit with a low voltage threshold set to 10.5v, once reached the attached (Web) device will beep
+> - The Ark has a power monitor circuit with a low voltage threshold set to 10.50v, once reached the attached device will beep and the voltage display will turn RED
 > - The WEB page is HTML and javascript, it is gzipped and base 64 encoded to save code space
+> - On startup if Green LED stay lit we did not find the WiFi module
+> - On startup if Green LED is flashing every 100ms the Access Point did not start
+> - On startup if Green LED is flashing every 1000ms the SD Card did not start
 
-In addition to the source code I created a YouTube video that provides additional details, the Link is: [The Ark Video](https://www.youtube.com/watch?v=oKCXiYc311A&t=149s)
+#### Arduino Software Notes
 
-I included a schematic for the project:
+> - Libraries needed : <SPI.h>, <SD.h>, <global.h>, <base64.h>, <WebSocketClient.h>, <WebSocketServer.h>, <WiFiNINA_Generic.h> and <KeyboardController.h>
+
+#### Schematic for the project
 
 ![The Ark Schematic](/Images/TheArk_Schematic.png)

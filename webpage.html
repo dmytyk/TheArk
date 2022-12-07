@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>The Ark Playground</title>
+        <title>The Ark</title>
         <meta charset="utf-8">
         <link rel="shortcut icon" href="#">
         <style>
@@ -258,7 +258,7 @@
         <div id="createprj" class="createprj">
             <table style="background-color: #ffffff; border:2px black solid;">
                 <tr>
-                    <td colspan="2" align="center" style="border:1px black solid; width:175px;"><b>Create Project</b></td>
+                    <td colspan="2" align="center" style="border:1px black solid; width:175px;"><b>Create/Build Project</b></td>
                 </tr>
                 <tr>
                     <td align="center">Active Project:</td><td id="Active_File"></td>
@@ -281,19 +281,19 @@
         <div id="displayprj" class="displayprj">
             <table style="background-color: #ffffff; border:2px black solid;">
                 <tr>
-                    <td colspan="2" align="center" style="border:1px black solid; width:175px;"><b>Display Project</b></td>
+                    <td colspan="2" align="center" style="border:1px black solid; width:175px;"><b>Search Projects</b></td>
                 </tr>
                 <tr>
                     <td align="center">&nbsp;</td></td>
                 </tr>
                 <tr>
-                    <td colspan="2" align="center">Read BarCode</td>
+                    <td colspan="2" align="center">Scanned BarCode</td>
                 </tr>
                 <tr>
                     <td colspan="2" ><textarea name="readbarcodes" id="readbarcodes" class="readbarcodes" rows="1" cols="21" readonly></textarea></td>
                 </tr>
                 <tr>
-                    <td colspan="2" align="center">Read Responses</td>
+                    <td colspan="2" align="center">Search Responses</td>
                 </tr>
                 </tr>
                 <tr>
@@ -336,14 +336,14 @@
             <div id="uploadfilebutton" class="uploadfilebutton">
                 <button type="button" id="UpdFile" class="uploadfilebuttonon" name="UpdFile" onclick="uploadfilecommand()">Download Project</button>
             </div>
-            <div id="toggleprjbutton" class="toggleprjbutton">
+            <div class="toggleprjbutton">
                 <button type="button" class="toggleprjinfo" onclick="toggleprj()">Project Mode</button>
             </div>
         </div>
 
         <div id="displayprjbuttons" class="displayprjbuttons">
-            <div id="toggleprjbutton" class="toggleprjbutton">
-                <button type="button" name="0" class="toggleprjinfo" onclick="toggleprj()">Project Mode</button>
+            <div class="toggleprjbutton">
+                <button type="button" class="toggleprjinfo" onclick="toggleprj()">Project Mode</button>
             </div>
         </div>
 
@@ -464,6 +464,13 @@
                         case "ListDir":
                             savefilename = "Projects.txt";
                             document.getElementById("Active_File").innerHTML = '<font color="black">Projects.txt</font>';
+                            break;
+                        case "RmvDir":
+                        case "RmvFile":
+                        case "ClrFile":
+                            if (confirm("Are you sure?") != true) {
+                                return;
+                            }
                             break;
                         default:
                             break;
