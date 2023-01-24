@@ -10,6 +10,68 @@
 //THE SOFTWARE.
 ///////////////////////////////////////////////////////////////////////////////////////
 
+// To Do
+// Remove a barcode
+// Format screen for ipad size
+// Create label for each barcode (scan barcode, type label, hit save - rewrite current scan process)
+// Ability to edit label
+
+// Project description box
+
+
+
+/*
+ * Remove a barcode
+ * 
+ * start
+have a existing file for reading
+
+[new file format]
+
+b           l  b          l
+bbbbbbb(cr)(cr)bbbbbbb(cr)asdcfvgbggghhhjjj(cr)
+
+where:
+
+bbbbbbb = barcode (7 characters max)
+(cr) = 0x0d (carriage return)  -  (cr)(cr) =  no label for this barcode
+asdcfvgbggghhhjjj = label (20 characters max)
+(overhead = 2(cr), 3(bc lb seperator)
+
+[end]
+
+1
+open temp file for writing
+
+2
+read existing file
+if not bc
+    save bc and label to temp file
+else
+    skip bc and label
+loop until end
+
+3
+now temp file is a copy of existing file - bc and label that was removed
+
+4
+truncate the existing file
+
+5
+reset temp file seek(0)
+
+6
+read temp file for bc and label
+write existing file with bc and label
+loop until end
+
+7
+close temp file
+remove temp file
+*/
+
+
+
 #include <SPI.h>
 #include <SD.h>
 
@@ -56,12 +118,21 @@ KeyboardController keyboard(usb);
 // SD Card
 int chipSelect = 4;     //MEM Shield chip select for an MRK 1010
 File ARK;               // general purpose file class
-File ARKSEARCH;         // search file class
 String fileName;        // projectName, must be 8.3 name format (8 = name, 3 = extension)
-char sdName[20];        // SD Open friendly name, can include directory, must end with a 0
-String searchfileName;  // projectName, must be 8.3 name format (8 = name, 3 = extension)
-char searchsdName[20];  // SD Open friendly name, can include directory, must end with a 0
+char sdName[20];        // SD Open friendly name, can include directory, can include directory, must end with a 0
 
+File DESC;               // general purpose file class
+String descName;        // projectName, must be 8.3 name format (8 = name, 3 = extension)
+char sdDesc[20];        // SD Open friendly name of the description for the file name, can include directory, must end with a 0
+
+File ARKSEARCH;         // search file class
+String searchfileName;  // projectName, must be 8.3 name format (8 = name, 3 = extension)
+char searchsdName[20];  // SD Open friendly name, can include directory, can include directory, must end with a 0
+int searchBCposition;   // 1-xx represents the position in the searchscName where the barcode was found
+
+File TEMP;              // temp file class
+String tempfileName;    // always Temp.txt
+char tempsdName[20];    // SD Open friendly name, can include directory, can include directory, must end with a 0
 
 // Data from Barcode Scanner
 char receive_buffer[20];
@@ -70,7 +141,7 @@ int receive_byte;
 
 
 // Battery Monitor
-float low_battery_warning = 10.5;          //Set the battery warning at 10.5V (default = 10.5V).
+float low_battery_warning = 5.2;          // Set the battery warning at 5.2V.
 float battery_voltage;
 int batterycounter = 0;
 
@@ -80,7 +151,7 @@ int led = 0;
 
 
 // ARK webpage, gzipped and base64 encoding to save space
-char webpage_base64[] = "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";
+char webpage_base64[] = "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";
 
 
 
@@ -108,139 +179,139 @@ void keyPressed() {
    // get a character
    receive_byte = keyboard.getKey();
 
-   // discard line feeds
-   if(receive_byte != 0x0a) {
-       //add it to the capture buffer
-       receive_buffer[receive_buffer_counter++] = receive_byte;
-   }
-
-   // see if it is the end on the capture
-   if(receive_byte == 0x0d) {
-       // if so end the buffer
-       receive_buffer[receive_buffer_counter] = byte(0);
-
-       // format it for sending over the websocket, only sent it id we are connected, the user could be scanning with no connection
-       String sbc = String(receive_buffer);
-       if(socketClient.connected()) {
-           webSocketServer.sendData("B:" + sbc);
+    // make sure we have a socket if no just drop it
+    if(socketClient.connected()) {
+       // discard line feeds
+       if(receive_byte != 0x0a) {
+           //add it to the capture buffer
+           receive_buffer[receive_buffer_counter++] = receive_byte;
        }
 
-       // see what mode we are in, create == true OR display == false
-       if(ProjectMode == true) {
-           // create/build project
-           // CHECK to see if a specific file is available
-           // if the file is available, write to it:
-           if(SD.exists(sdName)) {
-               // WRITE data to the file
-               ARK = SD.open(sdName, FILE_WRITE);
-               if (ARK) {
-                   ARK.print(sbc);
-                   ARK.close();
-                   if(TerminalAttached) {
-                     Serial.println(sbc);
-                   }
-               } else {
-                   if(TerminalAttached) {
-                       Serial.println("Error Opening: " + String(sdName));
-                   }
-               }
+       // see if it is the end on the capture
+       if(receive_byte == 0x0d) {
+           // if so end the buffer
+           receive_buffer[receive_buffer_counter] = byte(0);
+
+           // format it for sending over the websocket, only sent it id we are connected, the user could be scanning with no connection
+           String sbc = String(receive_buffer);
+
+           // see what mode we are in, create == true OR display == false
+           if(ProjectMode == true) {
+                // create/build project
+                // send the scanned barcode to the user and wait for a label and save button
+                webSocketServer.sendData("B:" + sbc);
            } else {
-               if(TerminalAttached) {
-                   Serial.println("Error Project Not Available: " + String(sdName));
-               }
-           }
-       } else {
-            // search projects
-            // clear the read responses box
-            webSocketServer.sendData("C:R");
+                // search projects
+                // clear the read responses box
+                webSocketServer.sendData("C:R");
 
-            String tempName;
-            boolean notFound = true;
+                // send the scanned barcode to the user and wait for a label update button OR a remove barcode button
+                webSocketServer.sendData("B:" + sbc);
 
-            // open the ARK directory
-            ARK = SD.open("/ARK");
+                String tempName;
+                boolean notFound = true;
 
-            // make sure we are at the first file in the directory
-            ARK.rewindDirectory();
+                // open the ARK directory
+                ARK = SD.open("/ARK");
 
-            // keep searching files until we find a match or there are no more files in the directory
-            while (notFound) {
-                // get next directory entry
-                File entry =  ARK.openNextFile();
-                if (! entry) {
-                  break;
-                }
+                // make sure we are at the first file in the directory
+                ARK.rewindDirectory();
 
-                // get the file name, and convert to a string
-                tempName = entry.name();
-                if(TerminalAttached) {
-                    Serial.println("Searching Project Name: " + tempName);
-                }
-
-                // build the full directory and file name
-                searchfileName = "/ARK/";  // directory
-                searchfileName += tempName;  // user create file name (8.3 format), this is the 8
-                searchfileName.toCharArray(searchsdName, 20);
-
-                // Open the specific file contents
-                if(SD.exists(searchsdName)) {
-                    // if the file is available, read it one byte at a time
-                    ARKSEARCH = SD.open(searchsdName, FILE_READ);
-
-                    // create the vars we need
-                    char readBuffer[20];
-                    byte b = 0;
-                    int readIndex = 0;
-                    String readData;
-                    int barcodecount = 1;
-
-                    // keep searching until we find a match or there are no more files
-                    while (ARKSEARCH.available() && notFound) {
-                        b = ARKSEARCH.read();
-                        readBuffer[readIndex++] = b;
-
-                        // if end of line
-                        if(b == 0x0d) {
-                            // if so end the buffer
-                            readBuffer[readIndex] = 0;
-
-                            // format it for comparing to the scanned barcode
-                            String rbc = String(readBuffer);
-                            if(sbc == rbc) {
-                                // found match, display and end
-                                // send the found entry
-                                webSocketServer.sendData("D:Barcode Found");
-                                webSocketServer.sendData("D:Project - " + tempName);
-                                webSocketServer.sendData("D:Row - " + String(barcodecount));
-                                
-                                // stop searching
-                                notFound = false;  
-                            }
-
-                            // reset the pointer for the next barcode
-                            readIndex = 0;
-
-                            // point to next entry in the file
-                            barcodecount++;
-                        }
+                // keep searching files until we find a match or there are no more files in the directory
+                while (notFound) {
+                    // get next directory entry
+                    File entry =  ARK.openNextFile();
+                    if (!entry) {
+                      break;
                     }
 
-                    // close the SD card
-                    ARKSEARCH.close();
+                    // get the file name, and convert to a string
+                    tempName = entry.name();
+
+                    // skip the .des files
+                    if(tempName.endsWith(".DES")) {
+                        continue;
+                    }
+
+                    if(TerminalAttached) {
+                        Serial.println("Searching Project Name: " + tempName);
+                    }
+
+                    // build the full directory and file name
+                    searchfileName = "/ARK/";  // directory
+                    searchfileName += tempName;  // user create file name (8.3 format), this is the 8
+                    searchfileName.toCharArray(searchsdName, 20);
+
+                    // Open the specific file contents
+                    if(SD.exists(searchsdName)) {
+                        // if the file is available, read it one byte at a time
+                        ARKSEARCH = SD.open(searchsdName, FILE_READ);
+
+                        // create the vars we need
+                        char readBuffer[20];
+                        byte b = 0;
+                        int readIndex = 0;
+                        String readData;
+                        searchBCposition = 0;
+
+                        // keep searching until we find a match or there are no more files
+                        while (ARKSEARCH.available() && notFound) {
+                            b = ARKSEARCH.read();
+                            readBuffer[readIndex++] = b;
+
+                            // if end of line
+                            if(b == 0x0d) {
+                                // if so end the buffer
+                                readBuffer[readIndex] = 0;
+
+                                // format it for comparing to the scanned barcode
+                                String rbc = String(readBuffer);
+                                if(sbc == rbc) {
+                                    // found match, display and end
+
+                                    // calculate the correct position
+                                    if(searchBCposition != 0) {
+                                        searchBCposition /= 2;
+                                        searchBCposition++;   
+                                    } else {
+                                        searchBCposition = 1;    
+                                    }
+                                    
+                                    // send the found entry
+                                    // the searchfileName, searchsdName (with full path) and searchBCposition are global vars and will be used by the update label and remove barcode buttons
+                                    webSocketServer.sendData("D:Barcode Found");
+                                    webSocketServer.sendData("D:Project - " + tempName);
+                                    webSocketServer.sendData("D:Row - " + String(searchBCposition));
+
+                                    // stop searching
+                                    notFound = false;
+                                } else {
+                                    // reset the pointer for the next barcode
+                                    readIndex = 0;
+
+                                    // point to next entry in the file
+                                    searchBCposition++;
+                                }
+                            }
+                        }
+
+                        // close the SD card
+                        ARKSEARCH.close();
+                    }
+                    entry.close();
                 }
-                entry.close();
-            }
-            if(notFound == true) {
-                // no entry found
-                webSocketServer.sendData("D:Not Found");                
-            }
+                if(notFound == true) {
+                    // no entry found
+                    webSocketServer.sendData("D:Not Found");
+                }
 
-            // no more files
-            webSocketServer.sendData("D:End of Search");
+                // no more files
+                webSocketServer.sendData("D:End of Search");
+           }
+
+           //reset the buffer pointer
+           receive_buffer_counter = 0;
        }
-
-       //reset the buffer pointer
-       receive_buffer_counter = 0;
    }
 }
 
@@ -280,21 +351,250 @@ void listDirectory(File dir) {
     }
 }
 
+// Save this barcode string
+// String sbd - the formatted barcode and label
+void saveBarcode(String sbc) {
+    // create/build project
+    // CHECK to see if a specific file is available
+    // if the file is available, write to it:
+    if(SD.exists(sdName)) {
+       // WRITE data to the file (append)
+       ARK = SD.open(sdName, FILE_WRITE);
+       if (ARK) {
+           ARK.print(sbc);
+           ARK.close();
+           if(TerminalAttached) {
+             Serial.println(sbc);
+           }
+       } else {
+           if(TerminalAttached) {
+               Serial.println("Error Opening: " + String(sdName));
+               webSocketServer.sendData("R:Error Opening - " + String(sdName));
+           }
+       }
+    } else {
+       if(TerminalAttached) {
+           Serial.println("Error Project Not Available: " + String(sdName));
+           webSocketServer.sendData("R:Error Project Not Available - " + String(sdName));
+       }
+    }
+}
+
+// go to a specific position in the searched file
+void removeBarcode() {
+    // if the file is available , remove the requested barcode:
+    if(SD.exists(searchsdName)) {
+       // WRITE data to the file (append)
+       ARKSEARCH = SD.open(searchsdName, FILE_READ);
+       ARKSEARCH.seek(0);
+       if (ARKSEARCH) {
+            // start at first barcode
+            int searchCount = 1;
+            byte crFlag = 0;
+            byte b = 0;
+
+            // create the Temp.txt file, make sure it is empty
+            tempfileName = "/ARK/Temp.txt";
+            tempfileName.toCharArray(tempsdName, 20);
+            TEMP = SD.open(tempsdName, O_WRITE | O_TRUNC);
+            
+            // keep searching until we find a match or there are no more barcodes
+            while (ARKSEARCH.available()) {
+                // get a byte
+                b = ARKSEARCH.read();
+                
+                // see if we are searched position, if not save it in the temp file
+                if(searchCount != searchBCposition) {
+                    TEMP.write(b);
+                }
+                
+                // check for carriage returns
+                if(b == 0x0d) {
+                    crFlag++;
+
+                    // if we are at the second one bump the search count, reset the carriage return flag so we can look for the next barcode/label set
+                    if(crFlag == 2) {
+                        searchCount++;
+                        crFlag = 0;    
+                    }
+                }                    
+            }
+
+            // we have skipped the barcode / label so now lets clean up send debug
+            //webSocketServer.sendData("D:Search Count - " + String(searchCount));
+
+            // close the search files
+            ARKSEARCH.close();
+            TEMP.close();
+
+            // reopen them, empty the search file and start the temp from the beginning
+            ARKSEARCH = SD.open(searchsdName, O_WRITE | O_TRUNC);
+            TEMP = SD.open(tempsdName, O_READ);
+            TEMP.seek(0);
+
+            // transfer all the data from the temp to the requested search file
+            while (TEMP.available()) {
+                b = TEMP.read();
+                ARKSEARCH.write(b);              
+            }
+            
+            // close the search files
+            ARKSEARCH.close();
+            TEMP.close();
+
+            // remove the temp file
+            //SD.remove(tempsdName);
+       } else {
+           if(TerminalAttached) {
+               Serial.println("Error Opening: " + String(searchsdName));
+               webSocketServer.sendData("R:Error Opening - " + String(searchsdName));
+           }
+       }
+    } else {
+       if(TerminalAttached) {
+           Serial.println("Error Search Project Not Available: " + String(searchsdName));
+           webSocketServer.sendData("R:Error Search Project Not Available - " + String(searchsdName));
+       }
+    }
+}
+
+// Save this barcode string
+// String bcLabel - the formatted barcode label
+void updateBCLabel(String bcLabel) {
+    // if the file is available , remove the requested barcode:
+    if(SD.exists(searchsdName)) {
+       // WRITE data to the file (append)
+       ARKSEARCH = SD.open(searchsdName, FILE_READ);
+       ARKSEARCH.seek(0);
+       if (ARKSEARCH) {
+            // start at first barcode
+            int searchCount = 1;
+            int updatecrFlag = 0;
+            int savecrFlag = 0;
+            boolean savedNewLabelFlag = false;
+            byte b = 0;
+
+            // create the Temp.txt file, make sure it is empty
+            tempfileName = "/ARK/Temp.txt";
+            tempfileName.toCharArray(tempsdName, 20);
+            TEMP = SD.open(tempsdName, O_WRITE | O_TRUNC);
+
+            // keep searching until we find a match or there are no more barcodes
+            while (ARKSEARCH.available()) {
+                // get a byte
+                b = ARKSEARCH.read();
+
+                // see if we are searched position, if not save it in the temp file
+                if(searchCount == searchBCposition) {
+                    // see if we are on the barcode (save it), label (update it), or just transferring data until done
+                    switch(updatecrFlag) {
+                        // barcode
+                        case 0:
+                            TEMP.write(b);
+                            if(b == 0x0d) {
+                                updatecrFlag++;
+                            }
+                        break;
+                        // label
+                        case 1:
+                            // we are discarding the old label by not saving it until we are at the end of it
+                            if(b == 0x0d) {
+                                // indicate we are done
+                                updatecrFlag++;
+                                searchCount++;
+                            } else {
+                                // have we saved the new label
+                                if(!savedNewLabelFlag) {
+                                    // save the new label, this is a one time action
+                                    
+                                    webSocketServer.sendData("R:Debug - " + String(bcLabel));
+                                    
+                                    int labellength = bcLabel.length();
+
+                                    webSocketServer.sendData("R:Debug - " + String(labellength));
+                                    
+                                    for(int i = 0; i <= (labellength - 1); i++) {
+                                        TEMP.write(bcLabel.charAt(i));
+                                    }
+
+                                    // indicate it is saved
+                                    savedNewLabelFlag = true;
+                                }
+                            }
+                        break;
+                        // new label has been saved so just keep working until all bytes have been transferred
+                        default:
+                            TEMP.write(b);
+                        break;
+                    }
+                } else {
+                    // save the byte 
+                    TEMP.write(b);
+                    
+                    // check for carriage returns
+                    if(b == 0x0d) {
+                        savecrFlag++;
+    
+                        // if we are at the second one bump the search count, reset the carriage return flag so we can look for the next barcode/label set
+                        if(savecrFlag == 2) {
+                            searchCount++;
+                            savecrFlag = 0;    
+                        }
+                    }
+                }
+            }
+
+            // we have skipped the barcode / label so now lets clean up send debug
+            //webSocketServer.sendData("D:Search Count - " + String(searchCount));
+
+            // close the search files
+            ARKSEARCH.close();
+            TEMP.close();
+
+            // reopen them, empty the search file and start the temp from the beginning
+            ARKSEARCH = SD.open(searchsdName, O_WRITE | O_TRUNC);
+            TEMP = SD.open(tempsdName, O_READ);
+            TEMP.seek(0);
+
+            // transfer all the data from the temp to the requested search file
+            while (TEMP.available()) {
+                b = TEMP.read();
+                ARKSEARCH.write(b);
+            }
+
+            // close the search files
+            ARKSEARCH.close();
+            TEMP.close();
+
+            // remove the temp file
+            //SD.remove(tempsdName);
+       } else {
+           if(TerminalAttached) {
+               Serial.println("Error Opening: " + String(searchsdName));
+               webSocketServer.sendData("R:Error Opening - " + String(searchsdName));
+           }
+       }
+    } else {
+       if(TerminalAttached) {
+           Serial.println("Error Search Project Not Available: " + String(searchsdName));
+           webSocketServer.sendData("R:Error Search Project Not Available - " + String(searchsdName));
+       }
+    }
+}
+
 
 
 
 // ** SETUP
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
-  pinMode(2, OUTPUT);                            // Green LED
+  pinMode(0, OUTPUT);                            // Green LED
   
   receive_buffer_counter = 0;
   
-  if(TerminalAttached) {  
     Serial.begin(9600);
-    delay(2000);
-  } 
-  
+    delay(2000); 
+
   // check for the WiFi module:
   if (WiFi.status() == WL_NO_MODULE) {
     if(TerminalAttached) {
@@ -302,7 +602,7 @@ void setup() {
     }
 
     // turn on Green LED solid no WiFi module
-    digitalWrite(2, HIGH);
+    digitalWrite(0, HIGH);
 
     // don't continue
     while (1) {
@@ -339,9 +639,9 @@ void setup() {
     
     // don't continue, but flash the status LED
     while (1) {
-      digitalWrite(2, HIGH);
+      digitalWrite(0, HIGH);
       delay(100);
-      digitalWrite(2, LOW);
+      digitalWrite(0, LOW);
       delay(100);
     };
   }
@@ -361,9 +661,9 @@ void setup() {
     }
     // don't continue, but flash the status LED
     while (1) {
-      digitalWrite(2, HIGH);
+      digitalWrite(0, HIGH);
       delay(1000);
-      digitalWrite(2, LOW);
+      digitalWrite(0, LOW);
       delay(1000);
     };
   }
@@ -392,9 +692,9 @@ void setup() {
   battery_voltage = (float)analogRead(4) / 112.81;
   
   // show that we have completed all setup, flash the Green LED once
-  digitalWrite(2, HIGH);
+  digitalWrite(0, HIGH);
   delay(1000);
-  digitalWrite(2, LOW);
+  digitalWrite(0, LOW);
 }
 
 
@@ -404,8 +704,10 @@ void setup() {
 void loop() {
   // Background Process 1 - poll the barcode scanner
   // poll the USB Host device, in this case the Barcode Reader
-  usb.Task();
-
+  if(!TerminalAttached) {  
+    usb.Task();
+  }
+  
   // Background Process 2 - process the web interface
   // compare the previous status to the current status
   if (status != WiFi.status()) {
@@ -567,10 +869,10 @@ void loop() {
 
       // process command
       if(cmd == "Ledon") {
-            digitalWrite(2, HIGH);
+            digitalWrite(0, HIGH);
             webSocketServer.sendData("R:" + cmd);
       } else if (cmd == "Ledoff") {
-            digitalWrite(2, LOW);
+            digitalWrite(0, LOW);
             webSocketServer.sendData("R:" + cmd);
       } else if (cmd == "CrtPrj") {
             ProjectMode = true;
@@ -578,27 +880,71 @@ void loop() {
       } else if (cmd == "DspPrj") {
             ProjectMode = false;
             webSocketServer.sendData("R:Project Mode - Search");
+      } else if (cmd == "UpdLab") {
+            // searchsdName - sd name (full path)
+            // searchBCposition - position in the file we found the barcode label
+            // call update barcode label function with the updated label string
+            updateBCLabel(usrVal);
+
+            // tell the user
+            webSocketServer.sendData("R:Barcode Label Updated");
+      } else if (cmd == "RmvBcode") {
+            // searchsdName - sd name (full path)
+            // searchBCposition - position in the file we found the barcode
+            removeBarcode();
+
+            // tell the user
+            webSocketServer.sendData("R:Barcode Removed");
+      } else if (cmd == "UpdDesc") {
+            // create/build project
+            // CHECK to see if a specific file is available
+            // if the file is available, truncate it and write the new description:
+            if(SD.exists(sdDesc)) {
+                DESC = SD.open (sdDesc, O_READ | O_WRITE | O_TRUNC);
+                if(DESC) {
+                    DESC.print(usrVal);
+                    webSocketServer.sendData("S:" + usrVal);
+                    webSocketServer.sendData("R:Description Updated");
+                } else {
+                    webSocketServer.sendData("R:Description Updated Failed");    
+                }
+                DESC.close();
+            }
+      } else if (cmd == "SaveBC") {
+            // call save barcode function with the barcode/label combo string
+            saveBarcode(usrVal);
+            webSocketServer.sendData("R:Barcode Saved");
       } else if (cmd == "ReSet") {
             // do local reset stuff
             // reset the file name
             fileName = "";
             fileName.toCharArray(sdName, 20);
 
+            descName = "";
+            descName.toCharArray(sdDesc, 20);
+
             // send reset response to tell webpage to reset
             webSocketServer.sendData("Z:");
-      } else if (cmd == "Change") {
+      } else if (cmd == "Select") {
             // build the full directory and file name
             fileName = "/ARK/";  // directory
+
             fileName += usrVal;  // user create file name (8.3 format), this is the 8
+            descName = fileName;
+
             fileName += ".txt";  // this is the 3
+            descName += ".des";
+
             if(TerminalAttached) {
                 Serial.println("Projectname: " + fileName);
             }
 
             // CREATE a file if it does not exists
             fileName.toCharArray(sdName, 20);
+            descName.toCharArray(sdDesc, 20);
             if(!SD.exists(sdName)) {
               ARK = SD.open(sdName, FILE_WRITE);
+              DESC = SD.open(descName, FILE_WRITE);
               if(ARK) {
                 if(TerminalAttached) {
                     Serial.println("Project Created: " + fileName);
@@ -606,17 +952,49 @@ void loop() {
                 // send the 8.3 part of the file name to the user as Active Projectname
                 webSocketServer.sendData("F:" + fileName.substring(5));
                 ARK.close();
+                DESC.close();
               } else {
                 if(TerminalAttached) {
                     Serial.println("Project NOT Created: " + fileName);
                 }
               }
             } else {
-              if(TerminalAttached) {
+                if(TerminalAttached) {
                   Serial.println("Project Opened: " + fileName);
-              }
-              // send the 8.3 part of the file name to the user as Active Projectname
-              webSocketServer.sendData("F:" + fileName.substring(5));
+                }
+                // send the 8.3 part of the file name to the user as Active Project Name
+                webSocketServer.sendData("F:" + fileName.substring(5));
+
+                //now read the description for the file so it can be displayed
+                // create the vars we need
+                boolean readError = false;
+                char readBuffer[100];
+                byte b = 0;
+                int readIndex = 0;
+                String readData;
+                DESC = SD.open(sdDesc, FILE_READ);
+                DESC.seek(0);
+                while (DESC.available()) {
+                     b = DESC.read();
+                     readBuffer[readIndex++] = b;
+                     if(readIndex >= 100) {
+                        readError = true;
+                        webSocketServer.sendData("S:Error Description too Long");
+                        break;
+                     }
+                }
+                if(!readError) {
+                    // if so end the buffer
+                    readBuffer[readIndex] = 0;
+
+                    // format it for sending over the websocket
+                    String rs = String(readBuffer);
+                    webSocketServer.sendData("S:" + rs);
+                    if(TerminalAttached) {
+                      Serial.println("Project Description: " + rs);
+                    }
+                }
+                DESC.close();
             }
       } else if (cmd == "ListDir") {
           // DISPLAY specific directory contents
@@ -640,27 +1018,49 @@ void loop() {
             ARK = SD.open(sdName, FILE_READ);
 
             // create the vars we need
-            char readBuffer[20];
+            // 31 string of 7+3+20+1 + 0x00
+            char readBuffer[32];
             byte b = 0;
             int readIndex = 0;
             String readData;
             int barcodecount = 0;
+            boolean buildBC = true;
             while (ARK.available()) {
+                if(readIndex >= 31) {
+                    webSocketServer.sendData("O:Error Reading BCS - Too Long");
+                    break;
+                }
+
+                // get a character from the file
                 b = ARK.read();
                 readBuffer[readIndex++] = b;
-                if(b == 0x0d) {
-                    // if so end the buffer
-                    readBuffer[readIndex] = 0;
 
-                    // format it for sending over the websocket
-                    String rs = String(readBuffer);
-                    webSocketServer.sendData("O:" + rs);
+                // build the barcode
+                if(buildBC) {
+                    if(b == 0x0d) {
+                        // format it for sending over the websocket
+                        readBuffer[--readIndex] = 0x20; // space
+                        readBuffer[readIndex++] = 0x2D; // dash
+                        readBuffer[readIndex++] = 0x20; // space
+                        buildBC = false;
+                    }
+                // build the label
+                } else {
+                    if(b == 0x0d) {
+                        // if so end the buffer
+                        readBuffer[readIndex] = 0;
 
-                    // count this barcode
-                    barcodecount++;
+                        // format it for sending over the websocket
+                        String rs = String(readBuffer);
+                        webSocketServer.sendData("O:" + rs);
 
-                    // reset the pointer for the next barcode
-                    readIndex = 0;
+                        // count this barcode
+                        barcodecount++;
+
+                        // reset the pointer for the next barcode
+                        readIndex = 0;
+                        buildBC = true;
+                    }
                 }
             }
             // send the barcode count
@@ -694,6 +1094,7 @@ void loop() {
             // if the SD card is present , make sure we have the "/ARK" directory, if not create it
             if(SD.exists(sdName)) {
                 SD.remove(sdName);
+                SD.remove(descName);
                 if(TerminalAttached) {
                     Serial.println("Project Removed:");
                 }

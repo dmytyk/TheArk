@@ -24,13 +24,16 @@ I plan on encasing the prototype in a project box for production use.
 #### Project Operations
 
 > - Change - Create/Change the Active Project using the name provided
-> - Show Projects - list all projects in the /ARK directory
-> - Show Project - show all scanner barcodes
+> - Change - Update Project Description
+> - Show All Projects - list all projects in the /ARK directory
+> - Display Project - show all scanner barcodes
 > - Remove Directory - Remove the /ARK directory (not recommend)
 > - Remove Project - Delete an Active Project
 > - Clear Project - empty the contents of a project
 > - Download Project - Transfer the contents of the Project Responses area to the attached device 
 > - Project Mode - switch between the Create Project (manage projects) and Display Project (search for a barcode) modes
+> - Remove Barcode - This will remove a barcode, and it's label
+> - Update Label - this will update a barcodes label
 
 #### Project Notes
 

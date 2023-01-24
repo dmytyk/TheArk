@@ -25,75 +25,95 @@
             div.createprj {
                 position: absolute;
                 top: 15px;
-                left: 345px;
+                left: 450px;
             }
             div.displayprj {
                 position: absolute;
                 top: 15px;
-                left: 345px;
+                left: 450px;
             }
             div.beepbutton {
                 position: absolute;
-                top: 297px;
+                top: 360px;
                 left: 15px;
             }
             div.ledonbutton {
                 position: absolute;
-                top: 297px;
-                left: 180px;
+                top: 360px;
+                left: 280px;
             }
             div.ledoffbutton {
                 position: absolute;
-                top: 340px;
-                left: 180px;
+                top: 410px;
+                left: 280px;
             }
             div.rstbutton {
                 position: absolute;
-                top: 340px;
+                top: 410px;
                 left: 15px;
             }
             div.listdirbutton {
                 position: absolute;
                 top: 15px;
-                left: 545px;
+                left: 750px;
             }
             div.listfilebutton {
                 position: absolute;
                 top: 60px;
-                left: 545px;
+                left: 750px;
             }
             div.rmvdirbutton {
                 position: absolute;
                 top: 105px;
-                left: 545px;
+                left: 750px;
             }
             div.rmvfilebutton {
                 position: absolute;
                 top: 150px;
-                left: 545px;
+                left: 750px;
+            }
+            div.rmvbarcode {
+                position: absolute;
+                top: 88px;
+                left: 750px;
+            }
+            div.updatelabel {
+                position: absolute;
+                top: 135px;
+                left: 750px;
             }
             div.clrfilebutton {
                 position: absolute;
                 top: 195px;
-                left: 545px;
+                left: 750px;
             }
             div.uploadfilebutton {
                 position: absolute;
                 top: 240px;
-                left: 545px;
+                left: 750px;
             }
             div.toggleprjbutton {
                 position: absolute;
-                top: 340px;
-                left: 545px;
+                top: 405px;
+                left: 750px;
             }
 
-            .commandbutton {
+            .selectbutton {
                 border: solid;
                 background-color: Orange;
                 color: black;
                 padding: 2px 2px;
                 width: 100px;
+                font-size: 12px;
+                cursor: pointer;
+                text-align: center;
+            }
+            .updatebutton {
+                border: solid;
+                background-color: Orange;
+                color: black;
+                padding: 2px 2px;
+                width: 150px;
                 font-size: 12px;
                 cursor: pointer;
                 text-align: center;
@@ -138,6 +158,16 @@
                 color: white;
                 padding: 5px 5px;
                 width: 150px;
+                font-size: 12px;
+                cursor: pointer;
+                text-align: center;
+            }
+            .savebutton {
+                border: solid;
+                background-color: Orange;
+                color: black;
+                padding: 2px 2px;
+                width: 100px;
                 font-size: 12px;
                 cursor: pointer;
                 text-align: center;
@@ -208,6 +238,28 @@
                 cursor: pointer;
                 text-align: center;
             }
+            .rmvbarcodeon {
+                border: solid;
+                border-color: black;
+                background-color: Red;
+                color: white;
+                padding: 5px 5px;
+                width: 120px;
+                font-size: 12px;
+                cursor: pointer;
+                text-align: center;
+            }
+            .updatelableon {
+                border: solid;
+                border-color: black;
+                background-color: orange;
+                color: white;
+                padding: 5px 5px;
+                width: 120px;
+                font-size: 12px;
+                cursor: pointer;
+                text-align: center;
+            }
             .toggleprjinfo {
                 border: solid;
                 border-color: black;
@@ -226,7 +278,7 @@
         <div class="wifistatus">
             <table style="background-color: #ffffff; border:2px black solid;">
                 <tr>
-                    <td colspan="2" align="center" style="border:1px black solid; width:300px;"><b>System Status</b></td>
+                    <td colspan="2" align="center" style="border:1px black solid; width:410px;"><b>System Status</b></td>
                 </tr>
                 <tr>
                     <td>WiFi Communication Link :</td><td id="SM_Communication"></td>
@@ -240,17 +292,27 @@
         <div class="usercontrol">
             <table style="background-color: #ffffff; border:2px black solid;">
                 <tr>
-                    <td colspan="2" align="center" style="border:1px black solid; width:300px;"><b>Setup / Configuration</b></td>
+                    <td colspan="2" align="center" style="border:1px black solid; width:400px;"><b>Setup / Configuration</b></td>
                 </tr>
                 <tr>
-                    <td>Project:</td>
-                    <td><input type="text" id="filename" size="13" maxlength="8">&nbsp;<button type="button" name="Change" class="commandbutton" onclick="sendcontrolcommand(name)">Change</button></td>
+                    <td>Project Name:</td>
+                    <td><input type="text" id="filename" size="25" maxlength="8">&nbsp;<button type="button" name="Select" id="Select" class="selectbutton" onclick="sendcontrolcommand(name)">Open Project</button></td>
+                </tr>
+                <tr>
+                    <td>Description:</td>
+                    <td><textarea name="prjdescription" id="prjdescription" class="prjdescription" rows="3" cols="39"></textarea></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center"><button type="button" name="UpdDesc" id="UpdDesc" class="updatebutton" onclick="sendcontrolcommand(name)">Update Description</button></td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
                 </tr>
                 <tr>
                     <td colspan="2" align="center">Command Responses</td>
                 </tr>
                 <tr>
-                    <td colspan="2" ><textarea name="response" id="response" class="response" rows="6" cols="38" readonly></textarea></td>
+                    <td colspan="2" ><textarea name="response" id="response" class="response" rows="3" cols="53" readonly></textarea></td>
                 </tr>
             </table>
         </div>
@@ -261,19 +323,28 @@
                     <td colspan="2" align="center" style="border:1px black solid; width:175px;"><b>Create/Build Project</b></td>
                 </tr>
                 <tr>
-                    <td align="center">Active Project:</td><td id="Active_File"></td>
+                    <td align="center">Open Project:</td><td id="Active_File"></td>
                 </tr>
                 <tr>
-                    <td colspan="2" align="center">Scanned BarCode</td>
+                    <td colspan="2" align="center">Create Barcode</td>
                 </tr>
                 <tr>
-                    <td colspan="2" ><textarea name="scannedbarcodes" id="scannedbarcodes" class="scannedbarcodes" rows="1" cols="21" readonly></textarea></td>
+                    <td colspan="2" align="center"><textarea name="scannedbarcodes" id="scannedbarcodes" class="scannedbarcodes" rows="1" cols="21" readonly></textarea></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">Barcode Label</td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center"><input name="createlabel" id="createlabel" class="createlabel"  size="20" maxlength="20"></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center"><button type="button" name="SaveBC" id="SaveBC" class="savebutton" onclick="sendcontrolcommand(name)">Save Barcode</button></td>
                 </tr>
                 <tr>
                     <td colspan="2" align="center">Project Responses</td>
                 </tr>
                 <tr>
-                    <td colspan="2" ><textarea name="fileresponses" id="fileresponses" class="fileresponses" rows="14" cols="21"></textarea></td>
+                    <td colspan="2" ><textarea name="fileresponses" id="fileresponses" class="fileresponses" rows="14" cols="35"></textarea></td>
                 </tr>
             </table>
         </div>
@@ -284,23 +355,30 @@
                     <td colspan="2" align="center" style="border:1px black solid; width:175px;"><b>Search Projects</b></td>
                 </tr>
                 <tr>
-                    <td align="center">&nbsp;</td></td>
+                    <td>&nbsp;</td>
                 </tr>
                 <tr>
-                    <td colspan="2" align="center">Scanned BarCode</td>
+                    <td colspan="2" align="center">Search Barcode</td>
                 </tr>
                 <tr>
-                    <td colspan="2" ><textarea name="readbarcodes" id="readbarcodes" class="readbarcodes" rows="1" cols="21" readonly></textarea></td>
+                    <td colspan="2" align="center"><textarea name="readbarcodes" id="readbarcodes" class="readbarcodes" rows="1" cols="21" readonly></textarea></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">Barcode Label</td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center"><textarea name="changelable" id="changelable" class="changelable" rows="1" cols="21"></textarea></td>
                 </tr>
                 <tr>
                     <td colspan="2" align="center">Search Responses</td>
                 </tr>
                 </tr>
                 <tr>
-                    <td colspan="2" ><textarea name="readresponses" id="readresponses" class="readresponses" rows="14" cols="21"></textarea></td>
+                    <td colspan="2" ><textarea name="readresponses" id="readresponses" class="readresponses" rows="15" cols="35"></textarea></td>
                 </tr>
             </table>
         </div>
+
 
         <div>
             <div id="beepbutton" class="beepbutton">
@@ -319,16 +397,16 @@
 
         <div id="createprjbuttons" class="createprjbuttons">
             <div id="listdirbutton" class="listdirbutton">
-                <button type="button" id="listdir" class="listdirbuttonon" name="ListDir" onclick="sendcontrolcommand(name)">Show Projects</button>
+                <button type="button" id="listdir" class="listdirbuttonon" name="ListDir" onclick="sendcontrolcommand(name)">Show All Projects</button>
             </div>
             <div id="listfilebutton" class="listfilebutton">
-                <button type="button" id="dumpfile" class="listfilebuttonon" name="ListFile" onclick="sendcontrolcommand(name)">Show Project</button>
+                <button type="button" id="dumpfile" class="listfilebuttonon" name="ListFile" onclick="sendcontrolcommand(name)">Display Project</button>
             </div>
             <div id="rmvdirbutton" class="rmvdirbutton">
                 <button type="button" id="rmvdir" class="rmvdirbuttonon" name="RmvDir" onclick="sendcontrolcommand(name)">Remove Directory</button>
             </div>
             <div id="rmvfilebutton" class="rmvfilebutton">
-                <button type="button" id="dumpfile" class="rmvfilebuttonon" name="RmvFile" onclick="sendcontrolcommand(name)">Remove Project</button>
+                <button type="button" id="rmvfile" class="rmvfilebuttonon" name="RmvFile" onclick="sendcontrolcommand(name)">Remove Project</button>
             </div>
             <div id="clrfilebutton" class="clrfilebutton">
                 <button type="button" id="clrfile" class="clrfilebuttonon" name="ClrFile" onclick="sendcontrolcommand(name)">Clear Project</button>
@@ -342,6 +420,12 @@
         </div>
 
         <div id="displayprjbuttons" class="displayprjbuttons">
+            <div id="rmvbarcode" class="rmvbarcode">
+                <button type="button" id="rmvbcode" class="rmvbarcodeon" name="RmvBcode" onclick="sendcontrolcommand(name)">Remove Barcode</button>
+            </div>
+            <div id="updatelabel" class="updatelabel">
+                <button type="button" id="Updlab" class="updatelableon" name="UpdLab" onclick="sendcontrolcommand(name)">Update Label</button>
+            </div>
             <div class="toggleprjbutton">
                 <button type="button" class="toggleprjinfo" onclick="toggleprj()">Project Mode</button>
             </div>
@@ -350,7 +434,8 @@
         <script>
             let server = "ws://" + window.location.hostname + ":8080/";
             let socket = null;
-            let savefilename = "Not Set";
+            let setfilename = "Not Set";
+            let dispfilename = "Not Set";
             document.getElementById('createprj').style.display = 'block';
             document.getElementById('createprjbuttons').style.display = 'block';
             document.getElementById('displayprj').style.display = 'none';
@@ -364,7 +449,11 @@
                 socket = new WebSocket(server);
 
                 socket.onopen = function() {
+                    // show connected
                     document.getElementById("SM_Communication").innerHTML = '<font color="green">Connected</font>';
+
+                    // reset the arduino, when it's done it will return a reset for the webpage
+                    socket.send("ReSet" +  ":" + 0);
                 }
 
                 socket.onmessage = function(m) {
@@ -393,8 +482,9 @@
                         document.getElementById("readresponses").scrollTop = document.getElementById("readresponses").scrollHeight;
                     }
                     if (sentData[0] == "F") {
-                        savefilename = sentData[1];
-                        document.getElementById("Active_File").innerHTML = savefilename;
+                        setfilename = sentData[1];
+                        dispfilename = sentData[1];
+                        document.getElementById("Active_File").innerHTML = dispfilename;
                     }
                     if (sentData[0] == "L") {
                         document.getElementById("BATTERY_STATUS").innerHTML = '<font color="red">' + sentData[1] + '</font>';
@@ -411,21 +501,27 @@
                         document.getElementById("response").innerHTML += sentData[1] + "\n";
                         document.getElementById("response").scrollTop = document.getElementById("response").scrollHeight;
                     }
+                    if (sentData[0] == "S") {
+                        document.getElementById('prjdescription').value = sentData[1];
+                    }
                     if (sentData[0] == "Z") {
                         // this is the reset response
+                        // clear the working vars
                         document.getElementById("filename").value = "";
+                        document.getElementById("scannedbarcodes").innerHTML = ""; // clear the barcode field (scanned barcode)
+                        document.getElementById("readbarcodes").innerHTML = ""; // clear the barcode field (searched barcode)
+                        document.getElementById("changelable").innerHTML = ""; // clear the barcode label
 
-                        savefilename = "Not Set";
+                        // set the defaults
+                        setfilename = "Not Set";
+                        dispfilename = "Not Set";
                         document.getElementById("Active_File").innerHTML = '<font color="red">Not Set</font>';
 
-                        // clear the barcode field (scanned barcode)
-                        document.getElementById("scannedbarcodes").innerHTML = "";
+                        // clear the display fields
+                        document.getElementById('prjdescription').value = '';
 
                         document.getElementById("fileresponses").innerHTML = "";
                         document.getElementById("fileresponses").scrollTop = document.getElementById("fileresponses").scrollHeight;
-
-                        // clear the barcode field (read barcode)
-                        document.getElementById("readbarcodes").innerHTML = "";
 
                         document.getElementById("readresponses").innerHTML = "";
                         document.getElementById("readresponses").scrollTop = document.getElementById("readresponses").scrollHeight;
@@ -451,23 +547,86 @@
 
             function sendcontrolcommand(cmd) {
                 let userVal = null;
+                let barcodeVal = null;
+                let labelVal = null;
                 try {
                     switch(cmd) {
-                        case "Change":
-                            userVal = (document.getElementById("filename").value).trim();
-                            if(userVal == "") {
-                                document.getElementById("response").innerHTML += "Err - No Project" + "\n";
+                        case "UpdLab":
+                            // get the project description
+                            labelVal = (document.getElementById("changelable").value).trim();
+                            userVal = labelVal + "\r";
+
+                            // just grab the filename from the 8.3 format
+                            let readbarcode = (document.getElementById("readbarcodes").value).trim();
+
+                            //make sure we have a filename
+                            if(readbarcode == "") {
+                                // set it to not found
+                                document.getElementById("response").innerHTML = "No Search Barcode" + "\n";
                                 document.getElementById("response").scrollTop = document.getElementById("response").scrollHeight;
                                 return;
                             }
                             break;
+                        case "UpdDesc":
+                            // get the project description
+                            userVal = (document.getElementById("prjdescription").value).trim();
+
+                            // just grab the filename from the 8.3 format
+                            let justfilename = setfilename.split(".");
+
+                            //make sure we have a filename
+                            if(justfilename[0] == "Not Set") {
+                                // set it to not found
+                                document.getElementById("response").innerHTML = "Active Project Not Set" + "\n";
+                                document.getElementById("response").scrollTop = document.getElementById("response").scrollHeight;
+                                return;
+                            }
+                            break;
+                        case "Select":
+                            userVal = (document.getElementById("filename").value).trim();
+                            if(userVal == "") {
+                                document.getElementById("response").innerHTML += "Error - No Project Name" + "\n";
+                                document.getElementById("response").scrollTop = document.getElementById("response").scrollHeight;
+                                return;
+                            }
+                            break;
+                        case "SaveBC":
+                            // build the save string bbbbbbb(cr)llllllll(cr)
+                            barcodeVal = (document.getElementById("scannedbarcodes").value).trim();
+                            if(barcodeVal == "") {
+                                document.getElementById("response").innerHTML += "Error - No Barcode Scanned" + "\n";
+                                document.getElementById("response").scrollTop = document.getElementById("response").scrollHeight;
+                                return;
+                            }
+                            labelVal = (document.getElementById("createlabel").value).trim();
+                            userVal = barcodeVal + "\r" + labelVal + "\r";
+                            break;
                         case "ListDir":
-                            savefilename = "Projects.txt";
-                            document.getElementById("Active_File").innerHTML = '<font color="black">Projects.txt</font>';
+                            dispfilename = "Projects.txt";
+                            document.getElementById("Active_File").innerHTML = '<font color="black">' + dispfilename + '</font>';
+                            break;
+                        case "ListFile":
+                            dispfilename = setfilename;
+                            if(dispfilename == "Not Set") {
+                                document.getElementById("Active_File").innerHTML = '<font color="red">' + dispfilename + '</font>';
+                            } else {
+                                document.getElementById("Active_File").innerHTML = '<font color="black">' + dispfilename + '</font>';
+                            }
                             break;
                         case "RmvDir":
                         case "RmvFile":
                         case "ClrFile":
+                            if (confirm("Are you sure?") != true) {
+                                return;
+                            }
+                            break;
+                        case "RmvBcode":
+                            userVal = (document.getElementById("readbarcodes").value).trim();
+                            if(userVal == "") {
+                                document.getElementById("response").innerHTML += "Error - No Search Barcode" + "\n";
+                                document.getElementById("response").scrollTop = document.getElementById("response").scrollHeight;
+                                return;
+                            }
                             if (confirm("Are you sure?") != true) {
                                 return;
                             }
@@ -483,7 +642,7 @@
 
             function uploadfilecommand() {
                 // just grab the filename from the 8.3 format
-                let justfilename = savefilename.split(".");
+                let justfilename = dispfilename.split(".");
 
                 //make sure we have a filename
                 if(justfilename[0] == "Not Set") {
